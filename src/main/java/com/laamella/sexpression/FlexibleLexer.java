@@ -9,14 +9,14 @@ enum LexState {
     TEXT, WHITESPACE, OTHER, CLOSED
 }
 
-public class SExpressionsLexer implements AutoCloseable {
+public class FlexibleLexer implements AutoCloseable {
     private final Callback callback;
     private StringBuilder token = new StringBuilder();
     private long tokenStartPos = 0;
     private LexState state = CLOSED;
     private long pos = 0;
 
-    public SExpressionsLexer(SExpressionsLexer.Callback callback) {
+    public FlexibleLexer(FlexibleLexer.Callback callback) {
         this.callback = callback;
     }
 

@@ -7,10 +7,10 @@ import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
-public class SExpressionsLexerTest {
+public class FlexibleLexerTest {
     private String result = "";
 
-    private final SExpressionsLexer.Callback c = new SExpressionsLexer.Callback() {
+    private final FlexibleLexer.Callback c = new FlexibleLexer.Callback() {
         @Override
         public void onText(String text, long start, long end) {
             result += "|t:" + text + " " + start + " " + end;
@@ -52,7 +52,7 @@ public class SExpressionsLexerTest {
         }
     };
 
-    private final SExpressionsLexer lexer = new SExpressionsLexer(c);
+    private final FlexibleLexer lexer = new FlexibleLexer(c);
 
     @Test
     public void lexComplexCase() throws IOException {
