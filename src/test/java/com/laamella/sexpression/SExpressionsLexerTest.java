@@ -7,10 +7,10 @@ import java.io.StringReader;
 
 import static org.junit.Assert.assertEquals;
 
-public class FlexibleLexerTest {
+public class SExpressionsLexerTest {
     private String result = "";
 
-    private final FlexibleLexer.Callback c = new FlexibleLexer.Callback() {
+    private final SExpressionsLexer.Callback c = new SExpressionsLexer.Callback() {
         @Override
         public void onText(String text, long start, long end) {
             result += "|t:" + text + " " + start + " " + end;
@@ -52,29 +52,29 @@ public class FlexibleLexerTest {
         }
     };
 
-    private final FlexibleLexer lexer = new FlexibleLexer(c);
+    private final SExpressionsLexer lexer = new SExpressionsLexer(c);
 
     @Test
-    public void lexComplexCase() throws IOException {
+    public void lexComplexCase() throws Exception {
         lexer.lex(new StringReader("(ae bde c ()() \t[{])[ "));
-        assertEquals("|<|ob:( 0|t:ae 1 2|w:  3 3|t:bde 4 6|w:  7 7|t:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|ob:[ 16|ob:{ 17|cb:] 18|cb:) 19|ob:[ 20|w:  21 21|>", result);
+        assertEquals("|<|ob:( 0|t:ae 1 2|w:  3 3|t:bde 4 6|w:  7 7|t:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|t:[{] 16 18|cb:) 19|t:[ 20 20|w:  21 21|>", result);
     }
 
     @Test
-    public void lexInitialAtomIsNotWhitespace() throws IOException {
+    public void lexInitialAtomIsNotWhitespace() throws Exception {
         lexer.lex(new StringReader("ae"));
         assertEquals("|<|t:ae 0 1|>", result);
     }
 
     @Test
-    public void lexReopen() throws IOException {
+    public void lexReopen() throws Exception {
         lexer.lex(new StringReader("aa"));
         lexer.lex(new StringReader("bb"));
         assertEquals("|<|t:aa 0 1|>|<|t:bb 0 1|>", result);
     }
 
     @Test
-    public void lexComments() throws IOException {
+    public void lexComments() throws Exception {
         lexer.lex(new StringReader("aa\n\t; hello\nbbb"));
         assertEquals("|<|t:aa 0 1|w:\n\t 2 3|c:; 4|w:  5 5|t:hello 6 10|w:\n 11 11|t:bbb 12 14|>", result);
     }

@@ -1,57 +1,40 @@
 package com.laamella.sexpression;
 
-import java.io.IOException;
-import java.io.Reader;
-
 import static com.laamella.sexpression.LexState.*;
 
 enum LexState {
     TEXT, WHITESPACE, OTHER, CLOSED
 }
 
-public class FlexibleLexer implements AutoCloseable {
+/**
+ * This lexer supports lots of different syntaxes and is used by more specific lexers.
+ */
+public class SExpressionsLexer implements Lexer {
     private final Callback callback;
     private StringBuilder token = new StringBuilder();
     private long tokenStartPos = 0;
     private LexState state = CLOSED;
     private long pos = 0;
 
-    public FlexibleLexer(FlexibleLexer.Callback callback) {
+    public SExpressionsLexer(SExpressionsLexer.Callback callback) {
         this.callback = callback;
-    }
-
-    public void lex(Reader reader) throws IOException {
-        while (true) {
-            int c = reader.read();
-            if (c == -1) {
-                close();
-                return;
-            }
-            lex((char) c);
-        }
     }
 
     public void lex(char c) {
         switch (c) {
-            case '#':
             case ';':
                 inState(OTHER);
                 callback.onComment(c, pos);
                 break;
             case '(':
-            case '[':
-            case '{':
                 inState(OTHER);
                 callback.onOpenBrace(c, pos);
                 break;
             case ')':
-            case ']':
-            case '}':
                 inState(OTHER);
                 callback.onCloseBrace(c, pos);
                 break;
             case '"':
-            case '\'':
                 inState(OTHER);
                 callback.onQuote(c, pos);
                 break;
