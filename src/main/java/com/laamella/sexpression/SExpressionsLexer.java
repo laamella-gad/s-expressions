@@ -33,6 +33,11 @@ public class SExpressionsLexer implements AutoCloseable {
 
     public void lex(char c) {
         switch (c) {
+            case '#':
+            case ';':
+                inState(OTHER);
+                callback.onComment(c, pos);
+                break;
             case '(':
             case '[':
             case '{':
@@ -95,6 +100,9 @@ public class SExpressionsLexer implements AutoCloseable {
 
     public interface Callback {
 
+        /**
+         * Called for everything that's not in one of the other categories
+         */
         void onText(String text, long start, long end);
 
         /**
@@ -126,5 +134,10 @@ public class SExpressionsLexer implements AutoCloseable {
          * Input (re)started.
          */
         void onOpen();
+
+        /**
+         * Called for potential comment characters: # ;
+         */
+        void onComment(char c, long pos);
     }
 }
