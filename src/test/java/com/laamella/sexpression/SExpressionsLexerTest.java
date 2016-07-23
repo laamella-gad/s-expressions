@@ -12,8 +12,8 @@ public class SExpressionsLexerTest {
 
     private final SExpressionsLexer.Callback c = new SExpressionsLexer.Callback() {
         @Override
-        public void onAtom(String atom, long start, long end) {
-            result += "|a:" + atom + " " + start + " " + end;
+        public void onText(String text, long start, long end) {
+            result += "|t:" + text + " " + start + " " + end;
         }
 
         @Override
@@ -52,19 +52,19 @@ public class SExpressionsLexerTest {
     @Test
     public void lexComplexCase() throws IOException {
         lexer.lex(new StringReader("(ae bde c ()() \t[{])[ "));
-        assertEquals("|o|ob:( 0|a:ae 1 2|w:  3 3|a:bde 4 6|w:  7 7|a:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|ob:[ 16|ob:{ 17|cb:] 18|cb:) 19|ob:[ 20|w:  21 21|c", result);
+        assertEquals("|o|ob:( 0|t:ae 1 2|w:  3 3|t:bde 4 6|w:  7 7|t:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|ob:[ 16|ob:{ 17|cb:] 18|cb:) 19|ob:[ 20|w:  21 21|c", result);
     }
 
     @Test
     public void lexInitialAtomIsNotWhitespace() throws IOException {
         lexer.lex(new StringReader("ae"));
-        assertEquals("|o|a:ae 0 1|c", result);
+        assertEquals("|o|t:ae 0 1|c", result);
     }
 
     @Test
     public void lexReopen() throws IOException {
         lexer.lex(new StringReader("aa"));
         lexer.lex(new StringReader("bb"));
-        assertEquals("|o|a:aa 0 1|c|o|a:bb 0 1|c", result);
+        assertEquals("|o|t:aa 0 1|c|o|t:bb 0 1|c", result);
     }
 }

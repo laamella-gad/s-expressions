@@ -6,7 +6,7 @@ import java.io.Reader;
 import static com.laamella.sexpression.LexState.*;
 
 enum LexState {
-    ATOM, WHITESPACE, OTHER, CLOSED
+    TEXT, WHITESPACE, OTHER, CLOSED
 }
 
 public class SExpressionsLexer implements AutoCloseable {
@@ -58,7 +58,7 @@ public class SExpressionsLexer implements AutoCloseable {
                 token.appendCodePoint(c);
                 break;
             default:
-                inState(ATOM);
+                inState(TEXT);
                 token.appendCodePoint(c);
                 break;
         }
@@ -79,8 +79,8 @@ public class SExpressionsLexer implements AutoCloseable {
             }
             if (token.length() > 0) {
                 switch (state) {
-                    case ATOM:
-                        callback.onAtom(token.toString(), tokenStartPos, pos - 1);
+                    case TEXT:
+                        callback.onText(token.toString(), tokenStartPos, pos - 1);
                         break;
                     case WHITESPACE:
                         callback.onWhitespace(token.toString(), tokenStartPos, pos - 1);
@@ -95,7 +95,7 @@ public class SExpressionsLexer implements AutoCloseable {
 
     public interface Callback {
 
-        void onAtom(String atom, long start, long end);
+        void onText(String text, long start, long end);
 
         /**
          * Whitespace includes tabs and newlines
