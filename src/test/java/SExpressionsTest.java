@@ -1,10 +1,6 @@
-import com.laamella.sexpression.SExpressionNode;
-import com.laamella.sexpression.SExpressionsLexer;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 

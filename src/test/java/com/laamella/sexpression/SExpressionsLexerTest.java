@@ -2,9 +2,6 @@ package com.laamella.sexpression;
 
 import org.junit.Test;
 
-import java.io.IOException;
-import java.io.StringReader;
-
 import static org.junit.Assert.assertEquals;
 
 public class SExpressionsLexerTest {
@@ -56,26 +53,26 @@ public class SExpressionsLexerTest {
 
     @Test
     public void lexComplexCase() throws Exception {
-        lexer.lex(new StringReader("(ae bde c ()() \t[{])[ "));
+        CharSource.push("(ae bde c ()() \t[{])[ ", lexer);
         assertEquals("|<|ob:( 0|t:ae 1 2|w:  3 3|t:bde 4 6|w:  7 7|t:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|t:[{] 16 18|cb:) 19|t:[ 20 20|w:  21 21|>", result);
     }
 
     @Test
     public void lexInitialAtomIsNotWhitespace() throws Exception {
-        lexer.lex(new StringReader("ae"));
+        CharSource.push("ae", lexer);
         assertEquals("|<|t:ae 0 1|>", result);
     }
 
     @Test
     public void lexReopen() throws Exception {
-        lexer.lex(new StringReader("aa"));
-        lexer.lex(new StringReader("bb"));
+        CharSource.push("aa", lexer);
+        CharSource.push("bb", lexer);
         assertEquals("|<|t:aa 0 1|>|<|t:bb 0 1|>", result);
     }
 
     @Test
     public void lexComments() throws Exception {
-        lexer.lex(new StringReader("aa\n\t; hello\nbbb"));
+        CharSource.push("aa\n\t; hello\nbbb", lexer);
         assertEquals("|<|t:aa 0 1|w:\n\t 2 3|c:; 4|w:  5 5|t:hello 6 10|w:\n 11 11|t:bbb 12 14|>", result);
     }
 }

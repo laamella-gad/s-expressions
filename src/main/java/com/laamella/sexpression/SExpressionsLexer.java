@@ -9,18 +9,22 @@ enum LexState {
 /**
  * This lexer supports lots of different syntaxes and is used by more specific lexers.
  */
-public class SExpressionsLexer implements Lexer {
-    private final Callback callback;
+public class SExpressionsLexer implements CharSink {
+    private Callback callback;
     private StringBuilder token = new StringBuilder();
     private long tokenStartPos = 0;
     private LexState state = CLOSED;
     private long pos = 0;
 
     public SExpressionsLexer(SExpressionsLexer.Callback callback) {
+        setCallback(callback);
+    }
+
+    public void setCallback(SExpressionsLexer.Callback callback) {
         this.callback = callback;
     }
 
-    public void lex(char c) {
+    public void accept(char c) {
         switch (c) {
             case ';':
                 inState(OTHER);

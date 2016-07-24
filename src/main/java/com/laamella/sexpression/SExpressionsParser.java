@@ -1,81 +1,162 @@
 package com.laamella.sexpression;
 
-import java.io.IOException;
-import java.io.Reader;
-import java.util.Optional;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
-import static com.laamella.sexpression.ParseState.*;
+public class SExpressionsParser implements CharSink {
+    private final SExpressionsLexer.Callback lexerCallback = new SExpressionsLexer.Callback() {
+        private final Deque<AtomList> stack = new ArrayDeque<>();
+        private boolean inQuotes;
+        private StringBuilder quoted;
+        private boolean inComment;
+        private boolean nothingButWhitespaceOnThisNewLine;
 
-enum ParseState {inAtom, inWhitespace, inQuotedAtom}
-
-public class SExpressionsParser {
-
-    public SExpressionNode parseExpressions(Reader reader) throws IOException {
-        AtomList list = new AtomList();
-        int c;
-        while ((c = reader.read()) != -1) {
-            if (c == '(') {
-                list.add(parseList(reader));
+        @Override
+        public void onText(String text, long start, long end) {
+            if (inComment) {
+                return;
+            }
+            nothingButWhitespaceOnThisNewLine = false;
+            if (inQuotes) {
+                quoted.append(text);
+            } else {
+                if (stack.isEmpty()) {
+                    callback.onAtom(text);
+                } else {
+                    stack.peek().add(text);
+                }
             }
         }
-        return list;
-    }
 
-    public Optional<SExpressionNode> parseExpression(Reader reader) throws IOException {
-        int c;
-        while ((c = reader.read()) != -1) {
-            if (c == '(') {
-                return Optional.of(parseList(reader));
+        @Override
+        public void onWhitespace(String whitespace, long start, long end) {
+            if (inComment) {
+                if (whitespace.contains("\n")) {
+                    nothingButWhitespaceOnThisNewLine = true;
+                    inComment = false;
+                } else {
+                    return;
+                }
+            }
+            if (inQuotes) {
+                quoted.append(whitespace);
+            } else if (whitespace.contains("\n")) {
+                nothingButWhitespaceOnThisNewLine = true;
+                inComment = false;
             }
         }
-        return Optional.empty();
-    }
 
-    private SExpressionNode parseList(Reader reader) throws IOException {
-        AtomList root = new AtomList();
-        ParseState state = inWhitespace;
-        StringBuilder atom = new StringBuilder();
-        int c;
-        while ((c = reader.read()) != -1) {
-            switch (state) {
-                case inWhitespace:
-                    if (!Character.isWhitespace(c)) {
-                        if (c == '(') {
-                            root.add(parseList(reader));
-                        } else if (c == ')') {
-                            return root;
-                        } else if (c == '"') {
-                            atom.setLength(0);
-                            state = inQuotedAtom;
-                        } else {
-                            atom.setLength(0);
-                            atom.appendCodePoint(c);
-                            state = inAtom;
-                        }
-                    }
-                    break;
-                case inAtom:
-                    if (Character.isWhitespace(c)) {
-                        root.add(atom);
-                        state = inWhitespace;
-                    } else if (c == ')') {
-                        root.add(atom);
-                        return root;
-                    } else {
-                        atom.appendCodePoint(c);
-                    }
-                    break;
-                case inQuotedAtom:
-                    if (c == '"') {
-                        root.add(atom);
-                        state = inWhitespace;
-                    } else {
-                        atom.appendCodePoint(c);
-                    }
-                    break;
+        @Override
+        public void onOpenBrace(char b, long pos) {
+            if (inComment) {
+                return;
+            }
+            nothingButWhitespaceOnThisNewLine = false;
+            if (inQuotes) {
+                quoted.appendCodePoint(b);
+            } else {
+                stack.push(new AtomList());
             }
         }
-        throw new IllegalStateException();
+
+        @Override
+        public void onCloseBrace(char b, long pos) {
+            if (inComment) {
+                return;
+            }
+            nothingButWhitespaceOnThisNewLine = false;
+            if (inQuotes) {
+                quoted.appendCodePoint(b);
+            } else {
+                if (stack.isEmpty()) {
+                    callback.onError(Callback.Error.TOO_MANY_CLOSING_PARENTHESES);
+                    return;
+                }
+                AtomList finishedList = stack.pop();
+                if (stack.isEmpty()) {
+                    callback.onExpression(finishedList);
+                } else {
+                    stack.peek().add(finishedList);
+                }
+            }
+        }
+
+        @Override
+        public void onQuote(char q, long pos) {
+            if (inComment) {
+                return;
+            }
+            nothingButWhitespaceOnThisNewLine = false;
+            if (inQuotes) {
+                if (stack.isEmpty()) {
+                    callback.onAtom(quoted.toString());
+                } else {
+                    stack.peek().add(quoted.toString());
+                }
+                quoted = new StringBuilder();
+                inQuotes = false;
+            } else {
+                inQuotes = true;
+            }
+
+        }
+
+        @Override
+        public void onClose() {
+            if (!stack.isEmpty()) {
+                callback.onError(Callback.Error.UNCLOSED_PARENTHESES);
+            }
+            if (inQuotes) {
+                callback.onError(Callback.Error.STREAM_ENDED_WHILE_IN_QUOTES);
+            }
+        }
+
+        @Override
+        public void onOpen() {
+            inQuotes = false;
+            quoted = new StringBuilder();
+            inComment = false;
+            nothingButWhitespaceOnThisNewLine = true;
+        }
+
+        @Override
+        public void onComment(char c, long pos) {
+            if (inComment) {
+                return;
+            }
+            if (inQuotes) {
+                quoted.append(c);
+            } else if (nothingButWhitespaceOnThisNewLine) {
+                inComment = true;
+            }
+        }
+    };
+
+    private final SExpressionsLexer lexer = new SExpressionsLexer(lexerCallback);
+
+    private final Callback callback;
+
+    public SExpressionsParser(Callback callback) {
+        this.callback = callback;
     }
 
+    @Override
+    public void accept(char c) {
+        lexer.accept(c);
+    }
+
+    @Override
+    public void close() throws Exception {
+        lexer.close();
+    }
+
+    public interface Callback {
+        enum Error {TOO_MANY_CLOSING_PARENTHESES, STREAM_ENDED_WHILE_IN_QUOTES, UNCLOSED_PARENTHESES}
+
+        void onAtom(String text);
+
+        void onExpression(AtomList expression);
+
+        void onError(Error error);
+    }
 }
