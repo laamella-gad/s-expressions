@@ -4,10 +4,10 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class SExpressionsLexerTest {
+public class SExpressionsStreamingLexerTest {
     private String result = "";
 
-    private final SExpressionsLexer.Callback c = new SExpressionsLexer.Callback() {
+    private final SExpressionsStreamingLexer.Callback c = new SExpressionsStreamingLexer.Callback() {
         @Override
         public void onText(String text, long start, long end) {
             result += "|t:" + text + " " + start + " " + end;
@@ -49,7 +49,7 @@ public class SExpressionsLexerTest {
         }
     };
 
-    private final SExpressionsLexer lexer = new SExpressionsLexer(c);
+    private final SExpressionsStreamingLexer lexer = new SExpressionsStreamingLexer(c);
 
     @Test
     public void lexComplexCase() throws Exception {

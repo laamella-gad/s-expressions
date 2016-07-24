@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 
 public class SExpressionsParserTest {
     private String result = "";
-    private final SExpressionsParser parser = new SExpressionsParser(new SExpressionsParser.Callback() {
+    private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
         @Override
         public void onAtom(String text) {
             result += "|a:" + text;

@@ -9,18 +9,18 @@ enum LexState {
 /**
  * This lexer supports lots of different syntaxes and is used by more specific lexers.
  */
-public class SExpressionsLexer implements CharSink {
+public class SExpressionsStreamingLexer implements CharSink {
     private Callback callback;
     private StringBuilder token = new StringBuilder();
     private long tokenStartPos = 0;
     private LexState state = CLOSED;
     private long pos = 0;
 
-    public SExpressionsLexer(SExpressionsLexer.Callback callback) {
+    public SExpressionsStreamingLexer(SExpressionsStreamingLexer.Callback callback) {
         setCallback(callback);
     }
 
-    public void setCallback(SExpressionsLexer.Callback callback) {
+    public void setCallback(SExpressionsStreamingLexer.Callback callback) {
         this.callback = callback;
     }
 
