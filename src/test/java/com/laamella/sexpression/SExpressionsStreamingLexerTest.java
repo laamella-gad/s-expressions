@@ -19,12 +19,12 @@ public class SExpressionsStreamingLexerTest {
         }
 
         @Override
-        public void onOpenBrace(char b, long pos) {
+        public void onOpeningBrace(char b, long pos) {
             result += "|ob:" + b + " " + pos;
         }
 
         @Override
-        public void onCloseBrace(char b, long pos) {
+        public void onClosingBrace(char b, long pos) {
             result += "|cb:" + b + " " + pos;
         }
 
@@ -34,12 +34,12 @@ public class SExpressionsStreamingLexerTest {
         }
 
         @Override
-        public void onClose() {
+        public void onCloseStream() {
             result += "|>";
         }
 
         @Override
-        public void onOpen() {
+        public void onOpenStream() {
             result += "|<";
         }
 

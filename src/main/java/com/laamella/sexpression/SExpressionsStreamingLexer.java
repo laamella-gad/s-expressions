@@ -1,15 +1,17 @@
 package com.laamella.sexpression;
 
-import static com.laamella.sexpression.LexState.*;
+import java.io.Closeable;
 
-enum LexState {
-    TEXT, WHITESPACE, OTHER, CLOSED
-}
+import static com.laamella.sexpression.SExpressionsStreamingLexer.LexState.*;
 
 /**
  * This lexer supports lots of different syntaxes and is used by more specific lexers.
  */
-public class SExpressionsStreamingLexer implements CharSink {
+public class SExpressionsStreamingLexer implements CharSink, Closeable {
+    enum LexState {
+        TEXT, WHITESPACE, OTHER, CLOSED
+    }
+
     private Callback callback;
     private StringBuilder token = new StringBuilder();
     private long tokenStartPos = 0;
@@ -32,11 +34,11 @@ public class SExpressionsStreamingLexer implements CharSink {
                 break;
             case '(':
                 inState(OTHER);
-                callback.onOpenBrace(c, pos);
+                callback.onOpeningBrace(c, pos);
                 break;
             case ')':
                 inState(OTHER);
-                callback.onCloseBrace(c, pos);
+                callback.onClosingBrace(c, pos);
                 break;
             case '"':
                 inState(OTHER);
@@ -60,13 +62,13 @@ public class SExpressionsStreamingLexer implements CharSink {
     @Override
     public void close() {
         inState(CLOSED);
-        callback.onClose();
+        callback.onCloseStream();
     }
 
     private void inState(LexState newState) {
         if (newState != state) {
             if (state == CLOSED) {
-                callback.onOpen();
+                callback.onOpenStream();
                 pos = 0;
             }
             if (token.length() > 0) {
@@ -98,29 +100,29 @@ public class SExpressionsStreamingLexer implements CharSink {
         void onWhitespace(String whitespace, long start, long end);
 
         /**
-         * Called for these kinds of braces: ( { [
+         * Called for (
          */
-        void onOpenBrace(char b, long pos);
+        void onOpeningBrace(char b, long pos);
 
         /**
-         * Called for these kinds of braces: ) } ]
+         * Called for )
          */
-        void onCloseBrace(char b, long pos);
+        void onClosingBrace(char b, long pos);
 
         /**
-         * Called for " '
+         * Called for "
          */
         void onQuote(char q, long pos);
 
         /**
          * Input ended. Sending more data will open it again.
          */
-        void onClose();
+        void onCloseStream();
 
         /**
          * Input (re)started.
          */
-        void onOpen();
+        void onOpenStream();
 
         /**
          * Called for potential comment characters: # ;
