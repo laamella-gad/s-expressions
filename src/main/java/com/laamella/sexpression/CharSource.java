@@ -6,7 +6,7 @@ import java.io.Reader;
 import java.io.StringReader;
 
 public class CharSource {
-	public static <T extends CharSink & Closeable> void push(String string, T charSink) throws Exception {
+	public static <T extends CharSink & Closeable> void push(String string, T charSink) throws IOException {
 		push(new StringReader(string), charSink);
 	}
 

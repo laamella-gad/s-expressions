@@ -2,6 +2,8 @@ package com.laamella.sexpression;
 
 import org.junit.Test;
 
+import java.io.IOException;
+
 import static com.laamella.sexpression.CharSource.push;
 import static org.junit.Assert.assertEquals;
 
@@ -40,31 +42,31 @@ public class SExpressionsParserTest {
 	});
 
 	@Test
-	public void lostAtoms() throws Exception {
+	public void lostAtoms() throws IOException {
 		push("wer ry zcv", parser);
 		assertEquals("|<|a:wer|a:ry|a:zcv|>", result);
 	}
 
 	@Test
-	public void oneExpr() throws Exception {
+	public void oneExpr() throws IOException {
 		push("(wer ry zcv)", parser);
 		assertEquals("|<|e:(wer ry zcv)|>", result);
 	}
 
 	@Test
-	public void nestedExpr() throws Exception {
+	public void nestedExpr() throws IOException {
 		push("(wer (ry zcv) (1 2) kkk)", parser);
 		assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|>", result);
 	}
 
 	@Test
-	public void tooManyClosingParentheses() throws Exception {
+	public void tooManyClosingParentheses() throws IOException {
 		push("())", parser);
 		assertEquals("|<|e:()|!:TOO_MANY_CLOSING_PARENTHESES|>", result);
 	}
 
 	@Test
-	public void unclosedParentheses() throws Exception {
+	public void unclosedParentheses() throws IOException {
 		push("(", parser);
 		assertEquals("|<|!:UNCLOSED_PARENTHESES|>", result);
 	}
