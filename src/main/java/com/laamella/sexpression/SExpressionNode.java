@@ -1,6 +1,6 @@
 package com.laamella.sexpression;
 
-public class SExpressionNode {
-    
+public interface SExpressionNode {
+	<A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
 }
 

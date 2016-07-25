@@ -1,14 +1,25 @@
 package com.laamella.sexpression;
 
-public class Atom extends SExpressionNode {
-    public final String value;
+public class Atom implements SExpressionNode {
+	public final String value;
 
-    public Atom(CharSequence value) {
-        this.value = value.toString();
-    }
+	public Atom(CharSequence value) {
+		this.value = value.toString();
+	}
 
-    @Override
-    public String toString() {
-        return value;
-    }
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		try {
+			SExpressionPrinterVisitor.TO_STRING.accept(this, output);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return output.toString();
+	}
+
+	@Override
+	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
+		return visitor.accept(this, arg);
+	}
 }

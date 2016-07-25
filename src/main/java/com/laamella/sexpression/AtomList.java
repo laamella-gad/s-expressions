@@ -3,7 +3,7 @@ package com.laamella.sexpression;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AtomList extends SExpressionNode {
+public class AtomList implements SExpressionNode {
     public final List<SExpressionNode> values = new LinkedList<>();
 
     public void add(SExpressionNode sExpressionNode) {
@@ -16,12 +16,17 @@ public class AtomList extends SExpressionNode {
 
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder("(");
-        String ws="";
-        for(SExpressionNode node: values){
-            s.append(ws).append(node.toString());
-            ws=" ";
+        StringBuilder output = new StringBuilder();
+        try {
+            SExpressionPrinterVisitor.TO_STRING.accept(this, output);
+        } catch (Exception e) {
+            return e.getMessage();
         }
-        return s.append(")").toString();
+        return output.toString();
     }
-} 
+
+    @Override
+    public <A, R> R visit(Visitor<A,R > visitor, A arg) throws Exception {
+        return visitor.accept(this, arg);
+    }
+}

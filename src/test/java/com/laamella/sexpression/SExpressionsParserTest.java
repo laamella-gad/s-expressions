@@ -50,13 +50,13 @@ public class SExpressionsParserTest {
 	@Test
 	public void oneExpr() throws IOException {
 		push("(wer ry zcv)", parser);
-		assertEquals("|<|e:(wer ry zcv)|>", result);
+		assertEquals("|<|e:(\"wer\" \"ry\" \"zcv\")|>", result);
 	}
 
 	@Test
 	public void nestedExpr() throws IOException {
 		push("(wer (ry zcv) (1 2) kkk)", parser);
-		assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|>", result);
+		assertEquals("|<|e:(\"wer\" (\"ry\" \"zcv\") (\"1\" \"2\") \"kkk\")|>", result);
 	}
 
 	@Test
