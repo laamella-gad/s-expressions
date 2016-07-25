@@ -29,7 +29,7 @@ public class AtomList implements SExpressionNode {
     }
 
     @Override
-    public <A, R> R visit(Visitor<A,R > visitor, A arg) throws Exception {
+    public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
         return visitor.accept(this, arg);
     }
 }
