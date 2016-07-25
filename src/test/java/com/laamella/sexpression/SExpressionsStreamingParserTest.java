@@ -71,19 +71,19 @@ public class SExpressionsStreamingParserTest {
 	@Test
 	public void commentOutsideExpressionIsFine() throws Exception {
 		push(";wer ry zcv\n()", parser);
-		assertEquals("|<|(|)|>", result);
+		assertEquals("|<|c:wer ry zcv|(|)|>", result);
 	}
 
 	@Test
 	public void commentCanHaveWhitespaceInFrontOfIt() throws Exception {
 		push("                 \t\t;wer ry zcv\n()", parser);
-		assertEquals("|<|(|)|>", result);
+		assertEquals("|<|c:wer ry zcv|(|)|>", result);
 	}
 
 	@Test
 	public void commentInsideExpressionOnALineIsFine() throws Exception {
 		push("(ab\n;wer ry zcv\nbc)", parser);
-		assertEquals("|<|(|a:ab|a:bc|)|>", result);
+		assertEquals("|<|(|a:ab|c:wer ry zcv|a:bc|)|>", result);
 	}
 
 	@Test
@@ -109,7 +109,7 @@ public class SExpressionsStreamingParserTest {
 	@Test
 	public void commentedQuote() throws Exception {
 		push(";a \" quote", parser);
-		assertEquals("|<|>", result);
+		assertEquals("|<|c:a \" quote|>", result);
 	}
 
 
