@@ -1,5 +1,5 @@
 package com.laamella.sexpression;
 
-public interface CharSink extends AutoCloseable {
+public interface CharSink {
     void accept(char c);
 }
