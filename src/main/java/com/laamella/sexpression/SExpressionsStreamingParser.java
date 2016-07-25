@@ -28,20 +28,10 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
 		public void onWhitespace(String whitespace, long start, long end) {
 			if (inComment) {
 				accumulator.append(whitespace);
-				if (whitespace.contains("\n")) {
-					callback.onComment(accumulator.toString().trim());
-					accumulator = new StringBuilder();
-					nothingButWhitespaceOnThisNewLine = true;
-					inComment = false;
-				} else {
-					return;
-				}
+				return;
 			}
 			if (inQuotes) {
 				accumulator.append(whitespace);
-			} else if (whitespace.contains("\n")) {
-				nothingButWhitespaceOnThisNewLine = true;
-				inComment = false;
 			}
 		}
 
@@ -95,7 +85,7 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
 			if (inQuotes) {
 				callback.onError(Error.STREAM_ENDED_WHILE_IN_QUOTES);
 			}
-			if(inComment) {
+			if (inComment) {
 				callback.onComment(accumulator.toString().trim());
 			}
 			callback.onCloseStream();
@@ -121,6 +111,19 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
 			} else if (nothingButWhitespaceOnThisNewLine) {
 				inComment = true;
 			}
+		}
+
+		@Override
+		public void onEndOfLine(long pos) {
+			if (inQuotes) {
+				accumulator.append("\n");
+			}
+			if (inComment) {
+				callback.onComment(accumulator.toString().trim());
+				accumulator = new StringBuilder();
+			}
+			nothingButWhitespaceOnThisNewLine = true;
+			inComment = false;
 		}
 	};
 
