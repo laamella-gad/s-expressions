@@ -1,5 +1,8 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.visitor.PrinterVisitor;
+import com.laamella.sexpression.visitor.Visitor;
+
 public class Atom implements SExpressionNode {
 	public final String value;
 
@@ -11,7 +14,7 @@ public class Atom implements SExpressionNode {
 	public String toString() {
 		StringBuilder output = new StringBuilder();
 		try {
-			SExpressionPrinterVisitor.TO_STRING.accept(this, output);
+			PrinterVisitor.TO_STRING.accept(this, output);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

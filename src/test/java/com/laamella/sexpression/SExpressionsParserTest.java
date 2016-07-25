@@ -47,16 +47,22 @@ public class SExpressionsParserTest {
 		assertEquals("|<|a:wer|a:ry|a:zcv|>", result);
 	}
 
-	@Test
-	public void oneExpr() throws IOException {
-		push("(wer ry zcv)", parser);
-		assertEquals("|<|e:(\"wer\" \"ry\" \"zcv\")|>", result);
-	}
+    @Test
+    public void oneExpr() throws IOException {
+        push("(wer ry zcv)", parser);
+        assertEquals("|<|e:(wer ry zcv)|>", result);
+    }
 
-	@Test
+    @Test
+    public void atomWithWhitespaceGetsQuoted() throws IOException {
+        push("(\"wer ry zcv\")", parser);
+        assertEquals("|<|e:(\"wer ry zcv\")|>", result);
+    }
+
+    @Test
 	public void nestedExpr() throws IOException {
 		push("(wer (ry zcv) (1 2) kkk)", parser);
-		assertEquals("|<|e:(\"wer\" (\"ry\" \"zcv\") (\"1\" \"2\") \"kkk\")|>", result);
+		assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|>", result);
 	}
 
 	@Test

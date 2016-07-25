@@ -27,7 +27,13 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
     }
 
     public void accept(char c) {
-        switch (c) {
+        if (c == '\n') {
+            inState(OTHER);
+            callback.onEndOfLine(pos);
+        } else if (Character.isWhitespace(c)) {
+            inState(WHITESPACE);
+            token.appendCodePoint(c);
+        } else switch (c) {
             case ';':
                 inState(OTHER);
                 callback.onComment(c, pos);
@@ -43,16 +49,6 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
             case '"':
                 inState(OTHER);
                 callback.onQuote(c, pos);
-                break;
-            case ' ':
-            case '\t':
-            case '\r':
-                inState(WHITESPACE);
-                token.appendCodePoint(c);
-                break;
-            case '\n':
-                inState(OTHER);
-                callback.onEndOfLine(pos);
                 break;
             default:
                 inState(TEXT);
@@ -132,9 +128,8 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
          */
         void onComment(char c, long pos);
 
-		/**
-         * Called on end of line, specifically when encountering the \n character.
-         * \r is treated as normal whitespace.
+        /**
+         * Called on end of line, specifically when encountering the \n character. \r is treated as normal whitespace.
          */
         void onEndOfLine(long pos);
     }

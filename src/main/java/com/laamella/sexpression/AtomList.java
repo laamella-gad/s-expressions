@@ -1,5 +1,8 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.visitor.PrinterVisitor;
+import com.laamella.sexpression.visitor.Visitor;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,7 +21,7 @@ public class AtomList implements SExpressionNode {
     public String toString() {
         StringBuilder output = new StringBuilder();
         try {
-            SExpressionPrinterVisitor.TO_STRING.accept(this, output);
+            PrinterVisitor.TO_STRING.accept(this, output);
         } catch (Exception e) {
             return e.getMessage();
         }
