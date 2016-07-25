@@ -1,9 +1,9 @@
-package com.laamella.sexpression;
+package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 
-public class Atom implements SExpressionNode {
+public abstract class Atom implements SExpression {
     public final String value;
 
     public Atom(CharSequence value) {

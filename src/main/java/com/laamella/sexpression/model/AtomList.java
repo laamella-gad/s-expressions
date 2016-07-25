@@ -1,4 +1,4 @@
-package com.laamella.sexpression;
+package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
@@ -6,11 +6,11 @@ import com.laamella.sexpression.visitor.Visitor;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AtomList implements SExpressionNode {
-    public final List<SExpressionNode> values = new LinkedList<>();
+public class AtomList implements SExpression {
+    public final List<SExpression> values = new LinkedList<>();
 
-    public void add(SExpressionNode sExpressionNode) {
-        values.add(sExpressionNode);
+    public void add(SExpression sExpression) {
+        values.add(sExpression);
     }
 
     public void add(CharSequence atom) {

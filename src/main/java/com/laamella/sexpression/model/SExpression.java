@@ -1,8 +1,8 @@
-package com.laamella.sexpression;
+package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.Visitor;
 
-public interface SExpressionNode {
+public interface SExpression {
     <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
 }
 

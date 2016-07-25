@@ -1,5 +1,7 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.model.AtomList;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayDeque;

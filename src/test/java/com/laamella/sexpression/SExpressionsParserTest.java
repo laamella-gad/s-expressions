@@ -1,5 +1,6 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.model.AtomList;
 import org.junit.Test;
 
 import java.io.IOException;

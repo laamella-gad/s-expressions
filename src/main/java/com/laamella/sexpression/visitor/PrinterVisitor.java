@@ -1,8 +1,8 @@
 package com.laamella.sexpression.visitor;
 
-import com.laamella.sexpression.Atom;
-import com.laamella.sexpression.AtomList;
-import com.laamella.sexpression.SExpressionNode;
+import com.laamella.sexpression.model.Atom;
+import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.SExpression;
 
 public class PrinterVisitor implements Visitor<Appendable, Void> {
     public static final PrinterVisitor TO_STRING = new PrinterVisitor();
@@ -23,7 +23,7 @@ public class PrinterVisitor implements Visitor<Appendable, Void> {
     public Void accept(AtomList atomList, Appendable output) throws Exception {
         output.append('(');
         String space = "";
-        for (SExpressionNode n : atomList.values) {
+        for (SExpression n : atomList.values) {
             output.append(space);
             n.visit(this, output);
             space = " ";
