@@ -11,7 +11,7 @@ Have a simple, efficient format for...
 * configuration files
 * object serialization
 
-* Make the API flexible enough to support other use cases, like implementing a Lisp.
+Additionally, make the API flexible enough to support other use cases, like implementing a Lisp.
 
 ## Examples
 
