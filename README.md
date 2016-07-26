@@ -58,13 +58,3 @@ for (Map.Entry<String, String> e : properties) {
 ### Sample for data storage
 
 TODO
-
-## Current features
-
-* reading s-expressions
-* streaming data
-* writing s-expressions
-* one line comments by starting a line with a semicolon
-* quoting by putting text between " "
-
-Coming features can be found in the issue tracker.
