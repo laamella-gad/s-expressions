@@ -17,9 +17,9 @@ public class CharSource {
 		}
 	}
 
-	public static <T extends CharSink & Closeable> void pushResource(String file, Charset encoding, T charSink) throws IOException {
+	public static <T extends CharSink & Closeable> void pushResource(String resourceName, Charset encoding, T charSink) throws IOException {
 		try (
-				InputStream resourceAsStream = CharSource.class.getResourceAsStream(file);
+				InputStream resourceAsStream = CharSource.class.getResourceAsStream(resourceName);
 				InputStreamReader reader = new InputStreamReader(resourceAsStream, encoding);
 		) {
 			push(reader, charSink);

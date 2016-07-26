@@ -1,37 +1,21 @@
 package com.laamella.sexpression;
 
-import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.properties.SProperties;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.laamella.sexpression.CharSource.*;
+import java.util.Map;
 
 public class Samples {
-	@Test
-	public void configurationFile() throws IOException {
-		List<Object> objects = parseFile("/config.s");
-		System.out.println(objects);
+    @Test
+    public void configurationFile() throws IOException {
+        SProperties properties = new SProperties();
+        properties.load("/config.s");
 
-	}
+        properties.get("application.window.height").ifPresent(System.out::println);
 
-	private List<Object> parseFile(String file) throws IOException {
-		List<Object> result = new ArrayList<>();
-		SExpressionsParser parser = new SExpressionsParser(new SExpressionsParser.Callback.Adapter() {
-			@Override
-			public void onExpression(AtomList expression) {
-				result.add(expression);
-			}
-
-			@Override
-			public void onOrphanText(String text) {
-				result.add(text);
-			}
-		});
-		pushResource(file, UTF8, parser);
-		return result;
-	}
-
+        for (Map.Entry<String, String> e : properties) {
+            System.out.println(e.getKey() + "->" + e.getValue());
+        }
+    }
 }

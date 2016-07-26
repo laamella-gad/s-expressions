@@ -2,6 +2,7 @@ package com.laamella.sexpression.visitor;
 
 import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.Comment;
 import com.laamella.sexpression.model.SExpression;
 
 public class PrinterVisitor implements Visitor<Appendable, Void> {
@@ -29,6 +30,11 @@ public class PrinterVisitor implements Visitor<Appendable, Void> {
             space = " ";
         }
         output.append(')');
+        return null;
+    }
+
+    @Override
+    public Void accept(Comment comment, Appendable output) throws Exception {
         return null;
     }
 }
