@@ -14,7 +14,7 @@ public class SExpressionsParser implements CharSink, Closeable {
         @Override
         public void onAtom(String text) {
             if (stack.isEmpty()) {
-                callback.onOrphanAtom(text);
+                callback.onOrphanText(text);
             } else {
                 stack.peek().add(text);
             }
@@ -84,7 +84,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         void onError(Error error);
 
-        void onOrphanAtom(String text);
+        void onOrphanText(String text);
 
         void onExpression(AtomList expression);
 
@@ -93,6 +93,32 @@ public class SExpressionsParser implements CharSink, Closeable {
         void onOpenStream();
 
         void onCloseStream();
+
+        class Adapter implements Callback {
+            @Override
+            public void onError(Error error) {
+            }
+
+            @Override
+            public void onOrphanText(String text) {
+            }
+
+            @Override
+            public void onExpression(AtomList expression) {
+            }
+
+            @Override
+            public void onComment(String comment) {
+            }
+
+            @Override
+            public void onOpenStream() {
+            }
+
+            @Override
+            public void onCloseStream() {
+            }
+        }
     }
 
     @Override

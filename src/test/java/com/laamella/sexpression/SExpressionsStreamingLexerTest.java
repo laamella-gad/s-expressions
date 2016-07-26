@@ -58,26 +58,26 @@ public class SExpressionsStreamingLexerTest {
 
 	@Test
 	public void lexComplexCase() throws Exception {
-		CharSource.push("(ae bde c ()() \t[{])[ ", lexer);
+		CharSource.pushString("(ae bde c ()() \t[{])[ ", lexer);
 		assertEquals("|<|ob:( 0|t:ae 1 2|w:  3 3|t:bde 4 6|w:  7 7|t:c 8 8|w:  9 9|ob:( 10|cb:) 11|ob:( 12|cb:) 13|w: \t 14 15|t:[{] 16 18|cb:) 19|t:[ 20 20|w:  21 21|>", result);
 	}
 
 	@Test
 	public void lexInitialAtomIsNotWhitespace() throws Exception {
-		CharSource.push("ae", lexer);
+		CharSource.pushString("ae", lexer);
 		assertEquals("|<|t:ae 0 1|>", result);
 	}
 
 	@Test
 	public void lexReopen() throws Exception {
-		CharSource.push("aa", lexer);
-		CharSource.push("bb", lexer);
+		CharSource.pushString("aa", lexer);
+		CharSource.pushString("bb", lexer);
 		assertEquals("|<|t:aa 0 1|>|<|t:bb 0 1|>", result);
 	}
 
 	@Test
 	public void lexComments() throws Exception {
-		CharSource.push("aa\n\t; hello\nbbb", lexer);
+		CharSource.pushString("aa\n\t; hello\nbbb", lexer);
 		assertEquals("|<|t:aa 0 1|eol 2|w:\t 3 3|c:; 4|w:  5 5|t:hello 6 10|eol 11|t:bbb 12 14|>", result);
 	}
 }

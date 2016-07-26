@@ -1,26 +1,14 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
 
-public class Atom implements SExpression {
-    public final String value;
+public class Comment implements Node {
+    public final String text;
 
-    public Atom(CharSequence value) {
-        this.value = value.toString();
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder output = new StringBuilder();
-        try {
-            PrinterVisitor.TO_STRING.accept(this, output);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-        return output.toString();
+    public Comment(String text) {
+        this.text = text;
     }
 
     @Override
@@ -35,18 +23,18 @@ public class Atom implements SExpression {
 
     @Override
     public Otherwise whenAtom(Consumer<Atom> action) {
+        return new Otherwise(true);
+    }
+
+    @Override
+    public Otherwise whenComment(Consumer<Comment> action) {
         action.accept(this);
         return new Otherwise(false);
     }
 
     @Override
-    public Otherwise whenComment(Consumer<Comment> action) {
-        return new Otherwise(true);
-    }
-
-    @Override
     public boolean isAtom() {
-        return true;
+        return false;
     }
 
     @Override
@@ -56,12 +44,12 @@ public class Atom implements SExpression {
 
     @Override
     public boolean isComment() {
-        return false;
+        return true;
     }
 
     @Override
     public Atom toAtom() {
-        return this;
+        throw new IllegalStateException();
     }
 
     @Override
@@ -71,6 +59,7 @@ public class Atom implements SExpression {
 
     @Override
     public Comment toComment() {
-        throw new IllegalStateException();
+        return this;
     }
+
 }
