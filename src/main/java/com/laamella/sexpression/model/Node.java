@@ -13,17 +13,31 @@ public interface Node {
 
     Otherwise whenComment(Consumer<Comment> action);
 
+    Otherwise whenWhitespace(Consumer<Whitespace> action);
+
+    Otherwise whenLineTerminator(Consumer<LineTerminator> action);
+
+    // TODO whens for the meta nodes
+
     boolean isAtom();
 
     boolean isList();
 
     boolean isComment();
 
-    Atom toAtom();
+    boolean isWhitespace();
 
-    AtomList toList();
+    boolean isLineTerminator();
 
-    Comment toComment();
+    Atom asAtom();
+
+    AtomList asList();
+
+    Comment asComment();
+
+    LineTerminator asLineTerminator();
+
+    Whitespace asWhitespace();
 
     class Otherwise {
         private final boolean b;

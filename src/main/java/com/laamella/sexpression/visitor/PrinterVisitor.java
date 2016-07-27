@@ -1,9 +1,6 @@
 package com.laamella.sexpression.visitor;
 
-import com.laamella.sexpression.model.Atom;
-import com.laamella.sexpression.model.AtomList;
-import com.laamella.sexpression.model.Comment;
-import com.laamella.sexpression.model.SExpression;
+import com.laamella.sexpression.model.*;
 
 public class PrinterVisitor implements Visitor<Appendable, Void> {
     public static final PrinterVisitor TO_STRING = new PrinterVisitor();
@@ -29,6 +26,16 @@ public class PrinterVisitor implements Visitor<Appendable, Void> {
 
     @Override
     public Void accept(Comment comment, Appendable output) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Void accept(Whitespace whitespace, Appendable arg) throws Exception {
+        return null;
+    }
+
+    @Override
+    public Void accept(LineTerminator lineTerminator, Appendable arg) throws Exception {
         return null;
     }
 }

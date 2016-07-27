@@ -88,20 +88,20 @@ public class SExpressionsStreamingParserTest {
 	@Test
 	public void quoteSomeAtoms() throws Exception {
 		CharSource.pushString("(ab     \"bc  rr)))\"    )", parser);
-		assertEquals("|<|(|a:ab|a:bc  rr)))|)|>", result);
+		assertEquals("|<|(|a:ab|a:\"bc  rr)))\"|)|>", result);
 	}
 
 	@Test
 	public void quotedMultiline() throws Exception {
 		CharSource.pushString("(\"bc\n\nrr\")", parser);
-		assertEquals("|<|(|a:bc\n\nrr|)|>", result);
+		assertEquals("|<|(|a:\"bc\n\nrr\"|)|>", result);
 	}
 
 
 	@Test
 	public void quotedComment() throws Exception {
 		CharSource.pushString("(\"bc\n;hello\nrr\")", parser);
-		assertEquals("|<|(|a:bc\n;hello\nrr|)|>", result);
+		assertEquals("|<|(|a:\"bc\n;hello\nrr\"|)|>", result);
 	}
 
 

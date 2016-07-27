@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class AtomList implements SExpression {
+public class AtomList extends SExpression {
     public final List<SExpression> values = new ArrayList<>();
     public final List<Node> nodes = new ArrayList<>();
 
@@ -47,11 +47,6 @@ public class AtomList implements SExpression {
     }
 
     @Override
-    public Otherwise whenComment(Consumer<Comment> action) {
-        return new Otherwise(true);
-    }
-
-    @Override
     public boolean isAtom() {
         return false;
     }
@@ -62,24 +57,13 @@ public class AtomList implements SExpression {
     }
 
     @Override
-    public boolean isComment() {
-        return false;
-    }
-
-
-    @Override
-    public Atom toAtom() {
+    public Atom asAtom() {
         throw new IllegalStateException();
     }
 
     @Override
-    public AtomList toList() {
+    public AtomList asList() {
         return this;
-    }
-
-    @Override
-    public Comment toComment() {
-        throw new IllegalStateException();
     }
 
     public boolean isAllAtoms() {

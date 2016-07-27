@@ -79,19 +79,19 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 			if (list.isEmpty()) {
 				// Not sure what we should do here
 			} else if (list.isAllAtoms()) {
-				String key = nesting + values[0].toAtom().value();
+				String key = nesting + values[0].asAtom().value();
 				StringBuilder value = new StringBuilder();
 				String space = "";
 				for (int i = 1; i < values.length; i++) {
-					value.append(space).append(values[i].toAtom().value());
+					value.append(space).append(values[i].asAtom().value());
 					space = " ";
 				}
 				store.put(key, value.toString());
 			} else if (values[0].isAtom()) {
-				String innerNesting = nesting + values[0].toAtom().value() + ".";
+				String innerNesting = nesting + values[0].asAtom().value() + ".";
 				for (int i = 1; i < values.length; i++) {
 					if (values[i].isList()) {
-						eval(innerNesting, values[i].toList());
+						eval(innerNesting, values[i].asList());
 					} else {
 						// not sure what semantics should be here
 						// (key (key value) wut wut (wut wut))

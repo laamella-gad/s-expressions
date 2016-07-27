@@ -2,23 +2,28 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
+import com.laamella.sexpression.codec.CombinedCodec;
 import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
 
-public class Atom implements SExpression {
+import static com.laamella.sexpression.codec.AtomCodec.*;
+
+public class Atom extends SExpression {
 	private final byte[] data;
 	private final AtomCodec codec;
 
+	private static final AtomCodec DEFAULT_STRING_CODEC= new CombinedCodec(SIMPLE, DOUBLE_QUOTE, BASE64);
+
 	public Atom(CharSequence value) {
-		this.codec = AtomCodec.DOUBLE_QUOTE;
-		this.data = codec.decode(value);
+		this.codec = DEFAULT_STRING_CODEC;
+		this.data = codec.decode(value).get();
 	}
 
 	public Atom(CharSequence value, AtomCodec codec) {
 		this.codec = codec;
-		this.data = codec.decode(value);
+		this.data = codec.decode(value).get();
 	}
 
 	public Atom(byte[] data, AtomCodec codec) {
@@ -30,7 +35,7 @@ public class Atom implements SExpression {
 	 * @return the atom as it would appear in an s-expression.
 	 */
 	public String encoded() {
-		return codec.encode(data);
+		return codec.encode(data).get();
 	}
 
 	/**
@@ -76,11 +81,6 @@ public class Atom implements SExpression {
 	}
 
 	@Override
-	public Otherwise whenComment(Consumer<Comment> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
 	public boolean isAtom() {
 		return true;
 	}
@@ -91,22 +91,12 @@ public class Atom implements SExpression {
 	}
 
 	@Override
-	public boolean isComment() {
-		return false;
-	}
-
-	@Override
-	public Atom toAtom() {
+	public Atom asAtom() {
 		return this;
 	}
 
 	@Override
-	public AtomList toList() {
-		throw new IllegalStateException();
-	}
-
-	@Override
-	public Comment toComment() {
+	public AtomList asList() {
 		throw new IllegalStateException();
 	}
 }

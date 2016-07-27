@@ -4,13 +4,7 @@ import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
 
-public class Comment extends Meta {
-	public final String text;
-
-	public Comment(String text) {
-		this.text = text;
-	}
-
+public class LineTerminator extends Meta {
 	@Override
 	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
 		return visitor.accept(this, arg);
@@ -18,8 +12,7 @@ public class Comment extends Meta {
 
 	@Override
 	public Otherwise whenComment(Consumer<Comment> action) {
-		action.accept(this);
-		return new Otherwise(false);
+		return new Otherwise(true);
 	}
 
 	@Override
@@ -29,12 +22,13 @@ public class Comment extends Meta {
 
 	@Override
 	public Otherwise whenLineTerminator(Consumer<LineTerminator> action) {
-		return new Otherwise(true);
+		action.accept(this);
+		return new Otherwise(false);
 	}
 
 	@Override
 	public boolean isComment() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -44,22 +38,21 @@ public class Comment extends Meta {
 
 	@Override
 	public boolean isLineTerminator() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public Comment asComment() {
-		return this;
+		throw new IllegalStateException();
 	}
 
 	@Override
 	public LineTerminator asLineTerminator() {
-		throw new IllegalStateException();
+		return this;
 	}
 
 	@Override
 	public Whitespace asWhitespace() {
 		throw new IllegalStateException();
 	}
-
 }

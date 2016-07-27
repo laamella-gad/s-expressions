@@ -71,11 +71,13 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
             }
             nothingButWhitespaceOnThisNewLine = false;
             if (inQuotes) {
+                accumulator.appendCodePoint(q);
                 callback.onAtom(accumulator.toString());
                 accumulator = new StringBuilder();
                 inQuotes = false;
             } else {
                 inQuotes = true;
+                accumulator.appendCodePoint(q);
             }
 
         }

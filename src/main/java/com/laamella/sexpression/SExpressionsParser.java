@@ -22,9 +22,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onListBegin() {
-
             stack.push(new AtomList());
-
         }
 
         @Override
@@ -39,7 +37,6 @@ public class SExpressionsParser implements CharSink, Closeable {
             } else {
                 stack.peek().add(finishedList);
             }
-
         }
 
         @Override
@@ -54,7 +51,7 @@ public class SExpressionsParser implements CharSink, Closeable {
                     callback.onError(Error.STREAM_ENDED_WHILE_IN_QUOTES);
                     break;
                 default:
-                    throw new AssertionError("Problem translating unknow error that should have been handled here.");
+                    throw new AssertionError("Problem translating unknown error that should have been handled here.");
             }
         }
 
