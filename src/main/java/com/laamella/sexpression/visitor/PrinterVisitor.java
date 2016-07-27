@@ -10,13 +10,7 @@ public class PrinterVisitor implements Visitor<Appendable, Void> {
 
     @Override
     public Void accept(Atom atom, Appendable output) throws Exception {
-        for (char c : atom.value.toCharArray()) {
-            if (Character.isWhitespace(c)) {
-                output.append('"').append(atom.value).append('"');
-                return null;
-            }
-        }
-        output.append(atom.value);
+        output.append(atom.encoded());
         return null;
     }
 
