@@ -10,7 +10,7 @@ public class Samples {
     @Test
     public void configurationFile() throws IOException {
         SProperties properties = new SProperties();
-        properties.load("/config.s");
+        properties.loadResource("/config.s");
 
         properties.get("application.window.height").ifPresent(System.out::println);
 
