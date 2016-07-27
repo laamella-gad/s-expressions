@@ -6,10 +6,7 @@ import com.laamella.sexpression.model.SExpression;
 
 import java.io.IOException;
 import java.io.Reader;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.laamella.sexpression.CharSource.*;
 
@@ -28,12 +25,34 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 		load(reader);
 	}
 
+	public SProperties(Properties properties) throws IOException {
+		load(properties);
+	}
+
 	public void load(Reader reader) throws IOException {
 		push(reader, parser);
 	}
 
 	public void loadResource(String file) throws IOException {
 		pushResource(file, UTF8, parser);
+	}
+
+	public void load(Properties properties) {
+		for (String key : properties.stringPropertyNames()) {
+			set(key, properties.getProperty(key));
+		}
+	}
+
+	public Properties asProperties() {
+		Properties properties = new Properties();
+		for (Map.Entry<String, String> e : this) {
+			properties.put(e.getKey(), e.getValue());
+		}
+		return properties;
+	}
+
+	private void set(String key, String value) {
+		store.put(key, value);
 	}
 
 	public Optional<String> get(String key) {
@@ -58,7 +77,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 		private void eval(String nesting, AtomList list) {
 			SExpression[] values = list.values.toArray(new SExpression[list.values.size()]);
 			if (list.isEmpty()) {
-				//
+				// Not sure what we should do here
 			} else if (list.isAllAtoms()) {
 				String key = nesting + values[0].toAtom().value;
 				StringBuilder value = new StringBuilder();
@@ -75,6 +94,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 						eval(innerNesting, values[i].toList());
 					} else {
 						// not sure what semantics should be here
+						// (key (key value) wut wut (wut wut))
 					}
 				}
 			} else {
