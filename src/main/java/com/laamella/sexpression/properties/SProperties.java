@@ -75,7 +75,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 		}
 
 		private void eval(String nesting, AtomList list) {
-			SExpression[] values = list.values.toArray(new SExpression[list.values.size()]);
+			SExpression[] values = list.list().toJavaArray(SExpression.class);
 			if (list.isEmpty()) {
 				// Not sure what we should do here
 			} else if (list.isAllAtoms()) {

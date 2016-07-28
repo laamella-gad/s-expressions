@@ -1,7 +1,5 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.visitor.Visitor;
-
 import java.util.function.Consumer;
 
 public abstract class Meta implements Node {
@@ -33,6 +31,26 @@ public abstract class Meta implements Node {
 	@Override
 	public final AtomList asList() {
 		throw new IllegalStateException();
+	}
+
+	@Override
+	public SExpression asSExpression() {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	public Meta asMeta() {
+		return this;
+	}
+
+	@Override
+	public boolean isSExpression() {
+		return false;
+	}
+
+	@Override
+	public boolean isMeta() {
+		return true;
 	}
 
 }

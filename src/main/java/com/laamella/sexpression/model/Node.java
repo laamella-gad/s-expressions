@@ -29,6 +29,10 @@ public interface Node {
 
     boolean isLineTerminator();
 
+    boolean isSExpression();
+
+    boolean isMeta();
+
     Atom asAtom();
 
     AtomList asList();
@@ -38,6 +42,10 @@ public interface Node {
     LineTerminator asLineTerminator();
 
     Whitespace asWhitespace();
+
+    SExpression asSExpression();
+
+    Meta asMeta();
 
     class Otherwise {
         private final boolean b;

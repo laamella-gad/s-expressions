@@ -15,7 +15,7 @@ public class PrinterVisitor implements Visitor<Appendable, Void> {
     public Void accept(AtomList atomList, Appendable output) throws Exception {
         output.append('(');
         String space = "";
-        for (SExpression n : atomList.values) {
+        for (Node n : atomList.nodes()) {
             output.append(space);
             n.visit(this, output);
             space = " ";

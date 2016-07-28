@@ -2,80 +2,103 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
+import javaslang.collection.Vector;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
+import static javaslang.collection.Vector.*;
+
 public class AtomList extends SExpression {
-    public final List<SExpression> values = new ArrayList<>();
-    public final List<Node> nodes = new ArrayList<>();
+	private Vector<Node> nodes = empty();
+	private Vector<SExpression> list = empty();
 
-    public void add(SExpression sExpression) {
-        values.add(sExpression);
-    }
+	public void add(Node node) {
+		setNodes(nodes.append(node));
+	}
 
-    public void add(CharSequence atom) {
-        values.add(new Atom(atom));
-    }
+	public void setNodes(Vector<Node> nodes) {
+		this.nodes = nodes;
+		list = nodes.filter(Node::isSExpression).map(Node::asSExpression);
+	}
 
-    @Override
-    public String toString() {
-        StringBuilder output = new StringBuilder();
-        try {
-            PrinterVisitor.TO_STRING.accept(this, output);
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-        return output.toString();
-    }
+	public void add(CharSequence atom) {
+		setNodes(nodes.append(new Atom(atom)));
+	}
 
-    @Override
-    public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
-        return visitor.accept(this, arg);
-    }
+	/**
+	 * @return all the nodes here, including comments, whitespace, etc.
+	 */
+	public Vector<Node> nodes() {
+		return nodes;
+	}
 
-    @Override
-    public Otherwise whenList(Consumer<AtomList> action) {
-        action.accept(this);
-        return new Otherwise(false);
-    }
+	/**
+	 * @return the atoms and lists inside this list.
+	 */
+	public Vector<SExpression> list() {
+		return list;
+	}
 
-    @Override
-    public Otherwise whenAtom(Consumer<Atom> action) {
-        return new Otherwise(true);
-    }
 
-    @Override
-    public boolean isAtom() {
-        return false;
-    }
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		try {
+			PrinterVisitor.TO_STRING.accept(this, output);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return output.toString();
+	}
 
-    @Override
-    public boolean isList() {
-        return true;
-    }
+	@Override
+	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
+		return visitor.accept(this, arg);
+	}
 
-    @Override
-    public Atom asAtom() {
-        throw new IllegalStateException();
-    }
+	@Override
+	public Otherwise whenList(Consumer<AtomList> action) {
+		action.accept(this);
+		return new Otherwise(false);
+	}
 
-    @Override
-    public AtomList asList() {
-        return this;
-    }
+	@Override
+	public Otherwise whenAtom(Consumer<Atom> action) {
+		return new Otherwise(true);
+	}
 
-    public boolean isAllAtoms() {
-        for (SExpression e : values) {
-            if (e.isList()) {
-                return false;
-            }
-        }
-        return true;
-    }
+	@Override
+	public boolean isAtom() {
+		return false;
+	}
 
-    public boolean isEmpty() {
-        return values.isEmpty();
-    }
+	@Override
+	public boolean isList() {
+		return true;
+	}
+
+	@Override
+	public Atom asAtom() {
+		throw new IllegalStateException();
+	}
+
+	@Override
+	public AtomList asList() {
+		return this;
+	}
+
+	public boolean isAllAtoms() {
+		for (Node e : nodes) {
+			if (e.isList()) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	public boolean isEmpty() {
+		return nodes.isEmpty();
+	}
+
+
 }

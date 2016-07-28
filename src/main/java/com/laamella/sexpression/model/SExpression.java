@@ -34,6 +34,16 @@ public abstract class SExpression implements Node {
 	}
 
 	@Override
+	public final boolean isSExpression() {
+		return true;
+	}
+
+	@Override
+	public final boolean isMeta() {
+		return false;
+	}
+
+	@Override
 	public final Comment asComment() {
 		throw new IllegalStateException();
 	}
@@ -47,4 +57,15 @@ public abstract class SExpression implements Node {
 	public final Whitespace asWhitespace() {
 		throw new IllegalStateException();
 	}
+
+	@Override
+	public SExpression asSExpression() {
+		return this;
+	}
+
+	@Override
+	public Meta asMeta() {
+		throw new IllegalStateException();
+	}
+
 }
