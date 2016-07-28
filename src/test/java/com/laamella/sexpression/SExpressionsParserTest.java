@@ -2,6 +2,7 @@ package com.laamella.sexpression;
 
 import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.Document;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -38,6 +39,11 @@ public class SExpressionsParserTest {
 		@Override
 		public void onCloseStream() {
 			result += "|>";
+		}
+
+		@Override
+		public void onDocument(Document document) {
+			result += "|d:" + document;
 		}
 
 		@Override

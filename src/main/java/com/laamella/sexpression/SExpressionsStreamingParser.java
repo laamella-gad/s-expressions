@@ -20,7 +20,7 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
             if (inQuotes) {
                 accumulator.append(text);
             } else {
-                callback.onAtom(text);
+                callback.onText(text);
             }
         }
 
@@ -72,7 +72,7 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
             nothingButWhitespaceOnThisNewLine = false;
             if (inQuotes) {
                 accumulator.appendCodePoint(q);
-                callback.onAtom(accumulator.toString());
+                callback.onText(accumulator.toString());
                 accumulator = new StringBuilder();
                 inQuotes = false;
             } else {
@@ -151,7 +151,7 @@ public class SExpressionsStreamingParser implements CharSink, Closeable {
 
     public interface Callback {
 
-        void onAtom(String text);
+        void onText(String text);
 
         void onListBegin();
 

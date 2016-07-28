@@ -5,6 +5,11 @@ import com.laamella.sexpression.visitor.Visitor;
 import java.util.function.Consumer;
 
 public class Whitespace extends Meta {
+	public String whitespace;
+
+	public Whitespace(String whitespace){
+		this.whitespace = whitespace;
+	}
 	@Override
 	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
 		return visitor.accept(this, arg);

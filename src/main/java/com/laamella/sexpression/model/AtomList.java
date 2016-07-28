@@ -1,6 +1,6 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.visitor.PrinterVisitor;
+import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
 
@@ -44,7 +44,7 @@ public class AtomList extends SExpression {
 	public String toString() {
 		StringBuilder output = new StringBuilder();
 		try {
-			PrinterVisitor.TO_STRING.accept(this, output);
+			StructuralPrinterVisitor.TO_STRING.accept(this, output);
 		} catch (Exception e) {
 			return e.getMessage();
 		}

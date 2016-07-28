@@ -8,7 +8,7 @@ public class SExpressionsStreamingParserTest {
 	private String result = "";
 	private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
 		@Override
-		public void onAtom(String text) {
+		public void onText(String text) {
 			result += "|a:" + text;
 		}
 
