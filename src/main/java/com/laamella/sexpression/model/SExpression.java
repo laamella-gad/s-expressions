@@ -1,5 +1,7 @@
 package com.laamella.sexpression.model;
 
+import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
+
 import java.util.function.Consumer;
 
 public abstract class SExpression implements Node {
@@ -14,7 +16,7 @@ public abstract class SExpression implements Node {
 	}
 
 	@Override
-	public final Otherwise whenLineTerminator(Consumer<LineTerminator> action) {
+	public final Otherwise whenLineTerminator(Consumer<EndOfLine> action) {
 		return new Otherwise(true);
 	}
 
@@ -49,7 +51,7 @@ public abstract class SExpression implements Node {
 	}
 
 	@Override
-	public final LineTerminator asLineTerminator() {
+	public final EndOfLine asLineTerminator() {
 		throw new IllegalStateException();
 	}
 
@@ -68,4 +70,14 @@ public abstract class SExpression implements Node {
 		throw new IllegalStateException();
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		try {
+			visit(StructuralPrinterVisitor.TO_STRING, output);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return output.toString();
+	}
 }

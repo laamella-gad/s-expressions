@@ -28,7 +28,7 @@ public class Whitespace extends Meta {
 	}
 
 	@Override
-	public Otherwise whenLineTerminator(Consumer<LineTerminator> action) {
+	public Otherwise whenLineTerminator(Consumer<EndOfLine> action) {
 		return new Otherwise(true);
 	}
 
@@ -53,7 +53,7 @@ public class Whitespace extends Meta {
 	}
 
 	@Override
-	public LineTerminator asLineTerminator() {
+	public EndOfLine asLineTerminator() {
 		throw new IllegalStateException();
 	}
 

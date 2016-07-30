@@ -1,5 +1,7 @@
 package com.laamella.sexpression.model;
 
+import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
+
 import java.util.function.Consumer;
 
 public abstract class Meta implements Node {
@@ -52,5 +54,17 @@ public abstract class Meta implements Node {
 	public boolean isMeta() {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder output = new StringBuilder();
+		try {
+			visit(StructuralPrinterVisitor.TO_STRING, output);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return output.toString();
+	}
+
 
 }

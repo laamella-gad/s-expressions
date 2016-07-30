@@ -18,12 +18,12 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 	@Override
 	public Void accept(AtomList atomList, Appendable output) throws Exception {
 		output.append('(');
-		print(atomList.nodes(), output);
+		print(atomList.list(), output);
 		output.append(')');
 		return null;
 	}
 
-	public void print(Seq<Node> list, Appendable output) throws Exception {
+	public void print(Seq<? extends Node> list, Appendable output) throws Exception {
 		String space = "";
 		for (Node n : list) {
 			output.append(space);
@@ -34,7 +34,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 
 	@Override
 	public Void accept(Document document, Appendable output) throws Exception {
-		print(document.nodes(), output);
+		print(document.list(), output);
 		return null;
 	}
 
@@ -49,7 +49,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 	}
 
 	@Override
-	public Void accept(LineTerminator lineTerminator, Appendable arg) throws Exception {
+	public Void accept(EndOfLine endOfLine, Appendable arg) throws Exception {
 		return null;
 	}
 }

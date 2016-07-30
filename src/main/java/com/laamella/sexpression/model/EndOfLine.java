@@ -4,7 +4,7 @@ import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
 
-public class LineTerminator extends Meta {
+public class EndOfLine extends Meta {
 	@Override
 	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
 		return visitor.accept(this, arg);
@@ -21,7 +21,7 @@ public class LineTerminator extends Meta {
 	}
 
 	@Override
-	public Otherwise whenLineTerminator(Consumer<LineTerminator> action) {
+	public Otherwise whenLineTerminator(Consumer<EndOfLine> action) {
 		action.accept(this);
 		return new Otherwise(false);
 	}
@@ -47,7 +47,7 @@ public class LineTerminator extends Meta {
 	}
 
 	@Override
-	public LineTerminator asLineTerminator() {
+	public EndOfLine asLineTerminator() {
 		return this;
 	}
 

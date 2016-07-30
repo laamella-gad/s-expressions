@@ -35,7 +35,7 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
 
 	@Override
 	public Void accept(Comment comment, Appendable output) throws Exception {
-		output.append(comment.text);
+		output.append(";").append(comment.text);
 		return null;
 	}
 
@@ -46,7 +46,7 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
 	}
 
 	@Override
-	public Void accept(LineTerminator lineTerminator, Appendable output) throws Exception {
+	public Void accept(EndOfLine endOfLine, Appendable output) throws Exception {
 		output.append("\n");
 		return null;
 	}

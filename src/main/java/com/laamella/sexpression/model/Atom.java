@@ -54,17 +54,6 @@ public class Atom extends SExpression {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder output = new StringBuilder();
-		try {
-			StructuralPrinterVisitor.TO_STRING.accept(this, output);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		return output.toString();
-	}
-
-	@Override
 	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
 		return visitor.accept(this, arg);
 	}

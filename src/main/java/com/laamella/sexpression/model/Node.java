@@ -15,7 +15,7 @@ public interface Node {
 
     Otherwise whenWhitespace(Consumer<Whitespace> action);
 
-    Otherwise whenLineTerminator(Consumer<LineTerminator> action);
+    Otherwise whenLineTerminator(Consumer<EndOfLine> action);
 
     // TODO whens for the meta nodes
 
@@ -39,7 +39,7 @@ public interface Node {
 
     Comment asComment();
 
-    LineTerminator asLineTerminator();
+    EndOfLine asLineTerminator();
 
     Whitespace asWhitespace();
 
