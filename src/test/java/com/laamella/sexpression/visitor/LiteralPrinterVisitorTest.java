@@ -11,13 +11,15 @@ public class LiteralPrinterVisitorTest {
     public void atom() {
         assertSameAfterParsingAndPrinting("abc");
     }
+
     @Test
     public void atomList() {
         assertSameAfterParsingAndPrinting("(abc)");
     }
+
     @Test
-    public void whitespace() {
-        assertSameAfterParsingAndPrinting(" ( ) \" \" \n ; \n\t");
+    public void whitespaceAndQuotesAndComments() {
+        assertSameAfterParsingAndPrinting(" ( ) \" \n \" \n ; \n\t");
     }
 
     private void assertSameAfterParsingAndPrinting(String e) {
