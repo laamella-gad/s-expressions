@@ -3,7 +3,7 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.codec.CombinedCodec;
-import com.laamella.sexpression.visitor.PrinterVisitor;
+import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
@@ -51,17 +51,6 @@ public class Atom extends SExpression {
 	 */
 	public String value() {
 		return new String(data, CharSource.UTF8);
-	}
-
-	@Override
-	public String toString() {
-		StringBuilder output = new StringBuilder();
-		try {
-			PrinterVisitor.TO_STRING.accept(this, output);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		return output.toString();
 	}
 
 	@Override

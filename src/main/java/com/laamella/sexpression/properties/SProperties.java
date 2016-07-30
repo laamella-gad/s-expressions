@@ -3,6 +3,7 @@ package com.laamella.sexpression.properties;
 import com.laamella.sexpression.SExpressionsParser;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.SExpression;
+import com.laamella.sexpression.visitor.LiteralPrinterVisitor;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -66,6 +67,12 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 	@Override
 	public Iterator<Map.Entry<String, String>> iterator() {
 		return store.entrySet().iterator();
+	}
+
+	// TODO make better
+	public void print() {
+		LiteralPrinterVisitor visitor = new LiteralPrinterVisitor();
+		// TODO should have
 	}
 
 	private class SPropertiesCallback extends SExpressionsParser.Callback.Adapter {

@@ -1,6 +1,6 @@
 package com.laamella.sexpression;
 
-import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -10,13 +10,36 @@ import java.util.Deque;
 public class SExpressionsParser implements CharSink, Closeable {
     private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
         private final Deque<AtomList> stack = new ArrayDeque<>();
+        private Document document = null;
 
         @Override
-        public void onAtom(String text) {
+        public void onText(String text) {
             if (stack.isEmpty()) {
-                callback.onOrphanText(text);
+                // TODO #26
+                document.add(text);
             } else {
+                // TODO #26
                 stack.peek().add(text);
+            }
+        }
+
+        @Override
+        public void onWhitespace(String whitespace) {
+            Whitespace ws = new Whitespace(whitespace);
+            if (stack.isEmpty()) {
+                document.add(ws);
+            } else {
+                stack.peek().add(ws);
+            }
+        }
+
+        @Override
+        public void onEndOfLine() {
+            EndOfLine eol = new EndOfLine();
+            if (stack.isEmpty()) {
+                document.add(eol);
+            } else {
+                stack.peek().add(eol);
             }
         }
 
@@ -33,6 +56,7 @@ public class SExpressionsParser implements CharSink, Closeable {
             }
             AtomList finishedList = stack.pop();
             if (stack.isEmpty()) {
+                document.add(finishedList);
                 callback.onExpression(finishedList);
             } else {
                 stack.peek().add(finishedList);
@@ -41,7 +65,12 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onComment(String comment) {
-            callback.onComment(comment);
+            Comment c = new Comment(comment);
+            if (stack.isEmpty()) {
+                document.add(c);
+            } else {
+                stack.peek().add(c);
+            }
         }
 
         @Override
@@ -57,14 +86,17 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onOpenStream() {
+            stack.clear();
+            document = new Document();
             callback.onOpenStream();
         }
 
         @Override
         public void onCloseStream() {
-            if (!stack.isEmpty()) {
+            if (stack.size() != 0) {
                 callback.onError(Error.UNCLOSED_PARENTHESES);
             }
+            callback.onDocument(document);
             callback.onCloseStream();
         }
     });
@@ -79,17 +111,16 @@ public class SExpressionsParser implements CharSink, Closeable {
 
     public interface Callback {
 
-        void onError(Error error);
-
-        void onOrphanText(String text);
+        void onDocument(Document document);
 
         void onExpression(AtomList expression);
 
-        void onComment(String comment);
+        void onError(Error error);
 
         void onOpenStream();
 
         void onCloseStream();
+
 
         class Adapter implements Callback {
             @Override
@@ -97,15 +128,7 @@ public class SExpressionsParser implements CharSink, Closeable {
             }
 
             @Override
-            public void onOrphanText(String text) {
-            }
-
-            @Override
             public void onExpression(AtomList expression) {
-            }
-
-            @Override
-            public void onComment(String comment) {
             }
 
             @Override
@@ -114,6 +137,24 @@ public class SExpressionsParser implements CharSink, Closeable {
 
             @Override
             public void onCloseStream() {
+            }
+
+            @Override
+            public void onDocument(Document document) {
+            }
+        }
+
+        class DocumentGrabbingCallback extends Adapter {
+            public Document document;
+
+            @Override
+            public void onDocument(Document document) {
+                this.document = document;
+            }
+
+            @Override
+            public void onError(Error error) {
+                throw new RuntimeException(error.name());
             }
         }
     }

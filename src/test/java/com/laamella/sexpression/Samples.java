@@ -17,5 +17,7 @@ public class Samples {
         for (Map.Entry<String, String> e : properties) {
             System.out.println(e.getKey() + "->" + e.getValue());
         }
+
+        properties.print();
     }
 }
