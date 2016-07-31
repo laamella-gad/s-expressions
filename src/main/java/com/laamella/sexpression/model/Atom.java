@@ -58,17 +58,6 @@ public class Atom extends SExpression {
 	}
 
 	@Override
-	public Otherwise whenList(Consumer<AtomList> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
-	public Otherwise whenAtom(Consumer<Atom> action) {
-		action.accept(this);
-		return new Otherwise(false);
-	}
-
-	@Override
 	public boolean isAtom() {
 		return true;
 	}
