@@ -1,10 +1,6 @@
 package com.laamella.sexpression.utils;
 
-import com.laamella.sexpression.model.AtomList;
-import com.laamella.sexpression.model.Document;
-import com.laamella.sexpression.model.Factory;
-import com.laamella.sexpression.model.Node;
-import javaslang.collection.Vector;
+import com.laamella.sexpression.model.*;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -33,20 +29,28 @@ public class Cursor {
      * Insert the nodes.
      * Afterwards, the cursor is just after the inserted nodes.
      */
-    public Cursor insert(Node... newNodes) {
+    public Cursor insertNodes(Node... newNodes) {
         for (Node n : newNodes) {
             insertNode(n);
-            forwardNode();
         }
         return this;
     }
 
     public Cursor insert(String... atoms) {
         for (String s : atoms) {
-            insertSpaceWhenNecessary();
-
+            insertSpaceBefore();
             insertNode(atom(s));
         }
+        insertSpaceAfter();
+        return this;
+    }
+
+    public Cursor insert(SExpression... exprs) {
+        for (SExpression s : exprs) {
+            insertSpaceBefore();
+            insertNode(s);
+        }
+        insertSpaceAfter();
         return this;
     }
 
@@ -60,17 +64,26 @@ public class Cursor {
      * Afterwards, the cursor is at the start of the new list.
      */
     public Cursor insertAndEnterList() {
-        insertSpaceWhenNecessary();
+        insertSpaceBefore();
         AtomList newList = Factory.list();
-        insert(newList);
+        insertNode(newList);
+        insertSpaceAfter();
         list = newList;
         position = 0;
         return this;
     }
 
-    private void insertSpaceWhenNecessary() {
-        if (!atBeginOfList()) {
+    private void insertSpaceBefore() {
+        if (!atFirstNode()) {
             if (!nodeAt(position - 1).isWhitespace()) {
+                insertNode(space());
+            }
+        }
+    }
+
+    private void insertSpaceAfter() {
+        if (!atLastNode()) {
+            if (!nodeAt(position).isWhitespace()) {
                 insertNode(space());
             }
         }
@@ -80,44 +93,44 @@ public class Cursor {
         return list.nodes().get(i);
     }
 
-    public Cursor forward() {
-        if (!atEndOfList()) {
+    public Cursor goForward() {
+        if (!atLastNode()) {
             position++;
         }
-        forwardToNext(Node::isSExpression);
+        goToNext(Node::isSExpression);
         return this;
     }
 
-    public Cursor forwardToNext(Predicate<Node> check) {
-        while (!atEndOfList() && check.test(list.nodes().get(position))) {
+    public Cursor goToNext(Predicate<Node> check) {
+        while (!atLastNode() && !check.test(list.nodes().get(position))) {
             position++;
         }
         return this;
     }
 
-    public Cursor backward() {
-        if (!atBeginOfList()) {
+    public Cursor goBackward() {
+        if (!atFirstNode()) {
             position--;
-            backwardToNext(Node::isSExpression);
+            goToPrevious(Node::isSExpression);
         }
         return this;
     }
 
-    private void backwardToNext(Predicate<Node> check) {
-        while (!atBeginOfList() && check.test(list.nodes().get(position))) {
+    private void goToPrevious(Predicate<Node> check) {
+        while (!atFirstNode() && !check.test(list.nodes().get(position))) {
             position--;
         }
     }
 
-    public Cursor forwardNode() {
-        if (!atEndOfList()) {
+    public Cursor goForwardNode() {
+        if (!atLastNode()) {
             position++;
         }
         return this;
     }
 
-    public Cursor backwardNode() {
-        if (!atBeginOfList()) {
+    public Cursor goBackwardNode() {
+        if (!atFirstNode()) {
             position--;
         }
         return this;
@@ -132,22 +145,22 @@ public class Cursor {
 
     public Cursor enterList() {
         list = node().get().asList();
-        toBegin();
+        goToBeginning();
         return this;
     }
 
-    public Cursor toEnd() {
+    public Cursor goToEnd() {
         position = list.nodes().length();
         return this;
     }
 
-    public Cursor toBegin() {
+    public Cursor goToBeginning() {
         position = 0;
         return this;
     }
 
     public Optional<Node> node() {
-        if (atEndOfList()) {
+        if (atLastNode()) {
             return Optional.empty();
         }
         return Optional.of(list.nodes().get(position));
@@ -157,11 +170,11 @@ public class Cursor {
         return list.document();
     }
 
-    public boolean atEndOfList() {
+    public boolean atLastNode() {
         return position >= list.nodes().size();
     }
 
-    public boolean atBeginOfList() {
+    public boolean atFirstNode() {
         return position == 0;
     }
 
@@ -170,12 +183,15 @@ public class Cursor {
     }
 
     public Cursor goTo(Node node) {
-        Vector<Node> nodes = list.nodes();
-        for (int i = 0; i < nodes.length(); i++) {
-            if (nodes.get(i) == node) {
-                position = i;
-                return this;
-            }
+        list.findPositionOfNode(node).ifPresent(p -> position = p);
+        return this;
+    }
+
+    public Cursor goToPosition(int i) {
+        goToBeginning();
+        while (i > 0) {
+            goForward();
+            i--;
         }
         return this;
     }
