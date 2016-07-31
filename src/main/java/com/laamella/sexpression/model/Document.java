@@ -28,6 +28,16 @@ public class Document extends AtomList {
         return visitor.accept(this, arg);
     }
 
+    @Override
+    public boolean isDocument() {
+        return true;
+    }
+
+    @Override
+    public Document asDocument() {
+        return this;
+    }
+
     public static Document from(Reader reader) throws IOException {
         DocumentGrabbingCallback callback = new DocumentGrabbingCallback();
         final SExpressionsParser parser = new SExpressionsParser(callback);

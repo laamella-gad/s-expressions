@@ -46,7 +46,7 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
 	}
 
 	@Override
-	public Void accept(EndOfLine endOfLine, Appendable output) throws Exception {
+	public Void accept(LineTerminator lineTerminator, Appendable output) throws Exception {
 		output.append("\n");
 		return null;
 	}

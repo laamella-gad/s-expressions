@@ -1,47 +1,103 @@
 package com.laamella.sexpression.model;
 
+import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
-
-import java.util.function.Consumer;
 
 public abstract class Node {
     private Node parent;
 
     public abstract <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
 
-    public abstract boolean isAtom();
+    public boolean isAtom() {
+        return false;
+    }
 
-    public abstract boolean isList();
+    public boolean isList() {
+        return false;
+    }
 
-    public abstract boolean isComment();
+    public boolean isDocument() {
+        return false;
+    }
 
-    public abstract boolean isWhitespace();
+    public boolean isComment() {
+        return false;
+    }
 
-    public abstract boolean isLineTerminator();
+    public boolean isWhitespace() {
+        return false;
+    }
 
-    public abstract boolean isSExpression();
+    public boolean isLineTerminator() {
+        return false;
+    }
 
-    public abstract boolean isMeta();
+    public boolean isSExpression() {
+        return false;
+    }
 
-    public abstract Atom asAtom();
+    public boolean isMeta() {
+        return false;
+    }
 
-    public abstract AtomList asList();
+    public Atom asAtom() {
+        throw new IllegalStateException();
+    }
 
-    public abstract Comment asComment();
+    public AtomList asList() {
+        throw new IllegalStateException();
+    }
 
-    public abstract EndOfLine asLineTerminator();
+    public Comment asComment() {
+        throw new IllegalStateException();
+    }
 
-    public abstract Whitespace asWhitespace();
+    public Document asDocument() {
+        throw new IllegalStateException();
+    }
 
-    public abstract SExpression asSExpression();
+    public LineTerminator asLineTerminator() {
+        throw new IllegalStateException();
+    }
 
-    public abstract Meta asMeta();
+    public Whitespace asWhitespace() {
+        throw new IllegalStateException();
+    }
+
+    public SExpression asSExpression() {
+        throw new IllegalStateException();
+    }
+
+    public Meta asMeta() {
+        throw new IllegalStateException();
+    }
 
     public Node parent() {
         return parent;
     }
-    
-    public void setParent(Node parent){
+
+    public Document document() {
+        if (isDocument()) {
+            return asDocument();
+        }
+        if (parent == null) {
+            throw new IllegalStateException("Node is not in a document.");
+        }
+        return parent.document();
+    }
+
+    public void setParent(Node parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder output = new StringBuilder();
+        try {
+            visit(StructuralPrinterVisitor.TO_STRING, output);
+        } catch (Exception e) {
+            return e.getMessage();
+        }
+        return output.toString();
     }
 }

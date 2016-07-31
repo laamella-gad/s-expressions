@@ -44,7 +44,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onEndOfLine() {
-            addToTopList(new EndOfLine());
+            addToTopList(new LineTerminator());
         }
 
         @Override

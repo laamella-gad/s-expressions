@@ -2,28 +2,19 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.Visitor;
 
-import java.util.function.Consumer;
-
-public class Comment extends Meta {
-	public final String text;
-
-	public Comment(String text) {
-		this.text = text;
-	}
-
+public class LineTerminator extends Meta {
 	@Override
 	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
 		return visitor.accept(this, arg);
 	}
 
 	@Override
-	public boolean isComment() {
+	public boolean isLineTerminator() {
 		return true;
 	}
 
 	@Override
-	public Comment asComment() {
+	public LineTerminator asLineTerminator() {
 		return this;
 	}
-
 }

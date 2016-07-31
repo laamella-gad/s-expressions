@@ -58,18 +58,8 @@ public class AtomList extends SExpression {
     }
 
     @Override
-    public boolean isAtom() {
-        return false;
-    }
-
-    @Override
     public boolean isList() {
         return true;
-    }
-
-    @Override
-    public Atom asAtom() {
-        throw new IllegalStateException();
     }
 
     @Override

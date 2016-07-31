@@ -49,7 +49,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 	}
 
 	@Override
-	public Void accept(EndOfLine endOfLine, Appendable arg) throws Exception {
+	public Void accept(LineTerminator lineTerminator, Appendable arg) throws Exception {
 		return null;
 	}
 }
