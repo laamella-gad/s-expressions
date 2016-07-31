@@ -3,8 +3,6 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
 
-import java.util.function.Consumer;
-
 public class AtomList extends SExpression {
     private Vector<Node> nodes;
     private Vector<SExpression> list;
@@ -30,6 +28,7 @@ public class AtomList extends SExpression {
     }
 
     public void setNodes(Vector<Node> nodes) {
+        nodes.forEach(n -> n.setParent(this));
         this.nodes = nodes;
         list = nodes.filter(Node::isSExpression).map(Node::asSExpression);
     }
@@ -56,17 +55,6 @@ public class AtomList extends SExpression {
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
         return visitor.accept(this, arg);
-    }
-
-    @Override
-    public Otherwise whenList(Consumer<AtomList> action) {
-        action.accept(this);
-        return new Otherwise(false);
-    }
-
-    @Override
-    public Otherwise whenAtom(Consumer<Atom> action) {
-        return new Otherwise(true);
     }
 
     @Override
@@ -101,6 +89,4 @@ public class AtomList extends SExpression {
     public boolean isEmpty() {
         return nodes.isEmpty();
     }
-
-
 }

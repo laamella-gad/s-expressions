@@ -2,24 +2,7 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 
-import java.util.function.Consumer;
-
-public abstract class SExpression implements Node {
-	@Override
-	public final Otherwise whenComment(Consumer<Comment> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
-	public final Otherwise whenWhitespace(Consumer<Whitespace> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
-	public final Otherwise whenLineTerminator(Consumer<EndOfLine> action) {
-		return new Otherwise(true);
-	}
-
+public abstract class SExpression extends Node {
 	@Override
 	public final boolean isComment() {
 		return false;

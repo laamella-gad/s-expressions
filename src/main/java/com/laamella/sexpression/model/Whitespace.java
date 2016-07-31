@@ -16,23 +16,6 @@ public class Whitespace extends Meta {
 	}
 
 	@Override
-	public Otherwise whenComment(Consumer<Comment> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
-	public Otherwise whenWhitespace(Consumer<Whitespace> action) {
-		action.accept(this);
-		return new Otherwise(false);
-
-	}
-
-	@Override
-	public Otherwise whenLineTerminator(Consumer<EndOfLine> action) {
-		return new Otherwise(true);
-	}
-
-	@Override
 	public boolean isComment() {
 		return false;
 	}

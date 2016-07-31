@@ -4,58 +4,44 @@ import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
 
-public interface Node {
-    <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
+public abstract class Node {
+    private Node parent;
 
-    Otherwise whenList(Consumer<AtomList> action);
+    public abstract <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
 
-    Otherwise whenAtom(Consumer<Atom> action);
+    public abstract boolean isAtom();
 
-    Otherwise whenComment(Consumer<Comment> action);
+    public abstract boolean isList();
 
-    Otherwise whenWhitespace(Consumer<Whitespace> action);
+    public abstract boolean isComment();
 
-    Otherwise whenLineTerminator(Consumer<EndOfLine> action);
+    public abstract boolean isWhitespace();
 
-    // TODO whens for the meta nodes
+    public abstract boolean isLineTerminator();
 
-    boolean isAtom();
+    public abstract boolean isSExpression();
 
-    boolean isList();
+    public abstract boolean isMeta();
 
-    boolean isComment();
+    public abstract Atom asAtom();
 
-    boolean isWhitespace();
+    public abstract AtomList asList();
 
-    boolean isLineTerminator();
+    public abstract Comment asComment();
 
-    boolean isSExpression();
+    public abstract EndOfLine asLineTerminator();
 
-    boolean isMeta();
+    public abstract Whitespace asWhitespace();
 
-    Atom asAtom();
+    public abstract SExpression asSExpression();
 
-    AtomList asList();
+    public abstract Meta asMeta();
 
-    Comment asComment();
-
-    EndOfLine asLineTerminator();
-
-    Whitespace asWhitespace();
-
-    SExpression asSExpression();
-
-    Meta asMeta();
-
-    class Otherwise {
-        private final boolean b;
-
-        public Otherwise(boolean executeElse) {
-            this.b = executeElse;
-        }
-
-        public void otherwise(Runnable r) {
-            if (b) r.run();
-        }
+    public Node parent() {
+        return parent;
+    }
+    
+    public void setParent(Node parent){
+        this.parent = parent;
     }
 }
