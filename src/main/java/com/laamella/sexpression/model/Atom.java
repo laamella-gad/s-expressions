@@ -3,7 +3,6 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.codec.CombinedCodec;
-import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 
 import java.util.function.Consumer;
@@ -14,7 +13,7 @@ public class Atom extends SExpression {
 	private final byte[] data;
 	private final AtomCodec codec;
 
-	private static final AtomCodec DEFAULT_STRING_CODEC= new CombinedCodec(SIMPLE, DOUBLE_QUOTE, BASE64);
+    private static final AtomCodec DEFAULT_STRING_CODEC = new CombinedCodec(SIMPLE, DOUBLE_QUOTE, BASE64);
 
 	public Atom(CharSequence value) {
 		this.codec = DEFAULT_STRING_CODEC;

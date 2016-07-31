@@ -1,46 +1,50 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.model.*;
 
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Optional;
+
+import static com.laamella.sexpression.codec.AtomCodec.*;
 
 public class SExpressionsParser implements CharSink, Closeable {
     private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
         private final Deque<AtomList> stack = new ArrayDeque<>();
         private Document document = null;
+        private final AtomCodec[] decodeList = new AtomCodec[]{BASE64, DOUBLE_QUOTE, SIMPLE};
 
         @Override
         public void onText(String text) {
-            if (stack.isEmpty()) {
-                // TODO #26
-                document.add(text);
-            } else {
-                // TODO #26
-                stack.peek().add(text);
+            for (AtomCodec codec : decodeList) {
+                Optional<byte[]> raw = codec.decode(text);
+                if (raw.isPresent()) {
+                    addToTopList(new Atom(raw.get(), codec));
+                    return;
+                }
             }
+        }
+
+        private void addToTopList(Node node) {
+            if (stack.isEmpty()) {
+                document.add(node);
+            } else {
+                stack.peek().add(node);
+            }
+
         }
 
         @Override
         public void onWhitespace(String whitespace) {
-            Whitespace ws = new Whitespace(whitespace);
-            if (stack.isEmpty()) {
-                document.add(ws);
-            } else {
-                stack.peek().add(ws);
-            }
+            addToTopList(new Whitespace(whitespace));
         }
 
         @Override
         public void onEndOfLine() {
-            EndOfLine eol = new EndOfLine();
-            if (stack.isEmpty()) {
-                document.add(eol);
-            } else {
-                stack.peek().add(eol);
-            }
+            addToTopList(new EndOfLine());
         }
 
         @Override
@@ -65,12 +69,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onComment(String comment) {
-            Comment c = new Comment(comment);
-            if (stack.isEmpty()) {
-                document.add(c);
-            } else {
-                stack.peek().add(c);
-            }
+            addToTopList(new Comment(comment));
         }
 
         @Override
