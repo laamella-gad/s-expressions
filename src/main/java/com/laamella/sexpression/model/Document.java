@@ -21,7 +21,12 @@ public class Document extends AtomList {
 
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
-        return visitor.accept(this, arg);
+        if (visitor.enter(this, arg) == Visitor.EnterDecision.ENTER) {
+            R r = visitor.accept(this, arg);
+            visitor.exit(this, r, arg);
+            return r;
+        }
+        return null;
     }
 
     @Override

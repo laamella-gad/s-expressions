@@ -7,6 +7,7 @@ import javaslang.collection.Vector;
 import java.util.Optional;
 
 import static com.laamella.sexpression.model.Factory.atom;
+import static com.laamella.sexpression.visitor.Visitor.EnterDecision;
 
 public class AtomList extends SExpression {
     private Vector<Node> nodes;
@@ -74,7 +75,13 @@ public class AtomList extends SExpression {
 
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
-        return visitor.accept(this, arg);
+        EnterDecision enter = visitor.enter(this, arg);
+        if (enter == EnterDecision.ENTER) {
+            R r = visitor.accept(this, arg);
+            visitor.exit(this, r, arg);
+            return r;
+        }
+        return null;
     }
 
     @Override

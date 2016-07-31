@@ -82,7 +82,7 @@ public class Cursor {
     }
 
     private void insertSpaceAfter() {
-        if (!atLastNode()) {
+        if (!atEnd()) {
             if (!nodeAt(position).isWhitespace()) {
                 insertNode(space());
             }
@@ -94,7 +94,7 @@ public class Cursor {
     }
 
     public Cursor goForward() {
-        if (!atLastNode()) {
+        if (!atEnd()) {
             position++;
         }
         goToNext(Node::isSExpression);
@@ -102,7 +102,7 @@ public class Cursor {
     }
 
     public Cursor goToNext(Predicate<Node> check) {
-        while (!atLastNode() && !check.test(list.nodes().get(position))) {
+        while (!atEnd() && !check.test(list.nodes().get(position))) {
             position++;
         }
         return this;
@@ -123,7 +123,7 @@ public class Cursor {
     }
 
     public Cursor goForwardNode() {
-        if (!atLastNode()) {
+        if (!atEnd()) {
             position++;
         }
         return this;
@@ -160,7 +160,7 @@ public class Cursor {
     }
 
     public Optional<Node> node() {
-        if (atLastNode()) {
+        if (atEnd()) {
             return Optional.empty();
         }
         return Optional.of(list.nodes().get(position));
@@ -170,7 +170,7 @@ public class Cursor {
         return list.document();
     }
 
-    public boolean atLastNode() {
+    public boolean atEnd() {
         return position >= list.nodes().size();
     }
 
