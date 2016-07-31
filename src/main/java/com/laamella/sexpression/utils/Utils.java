@@ -21,4 +21,10 @@ public class Utils {
         }
         return false;
     }
+
+    public static void assertNotNull(Object o) {
+        if (o == null) {
+            throw new AssertionError("Unexpected null value");
+        }
+    }
 }

@@ -1,10 +1,8 @@
 package com.laamella.sexpression.visitor;
 
-import com.laamella.sexpression.model.Atom;
-import com.laamella.sexpression.model.AtomList;
-import com.laamella.sexpression.model.Document;
 import org.junit.Test;
 
+import static com.laamella.sexpression.model.Factory.*;
 import static org.junit.Assert.assertEquals;
 
 public class StructuralPrinterVisitorTest {
@@ -13,13 +11,13 @@ public class StructuralPrinterVisitorTest {
 
     @Test
     public void printDocument() throws Exception {
-        visitor.accept(new Document(new Atom("abc"), new Atom("def")), output);
+        visitor.accept(document(atom("abc"), atom("def")), output);
         assertEquals("abc def", output.toString());
     }
 
     @Test
     public void printAtomList() throws Exception {
-        visitor.accept(new AtomList(new Atom("abc"), new Atom("def")), output);
+        visitor.accept(list(atom("abc"), atom("def")), output);
         assertEquals("(abc def)", output.toString());
     }
 }

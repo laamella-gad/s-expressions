@@ -10,12 +10,8 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class Document extends AtomList {
-    public Document(Node... nodes) {
-        super(nodes);
-    }
-
-    public Document(Vector<Node> nodes) {
-        super(nodes);
+    protected Document(Vector<Node> nodes) {
+        super(null, nodes);
     }
 
     @Override

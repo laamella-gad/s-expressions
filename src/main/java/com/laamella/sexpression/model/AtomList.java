@@ -1,17 +1,19 @@
 package com.laamella.sexpression.model;
 
+import com.laamella.sexpression.utils.Cursor;
 import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
+
+import java.util.Optional;
+
+import static com.laamella.sexpression.model.Factory.atom;
 
 public class AtomList extends SExpression {
     private Vector<Node> nodes;
     private Vector<SExpression> list;
 
-    public AtomList(Node... nodes) {
-        setNodes(nodes);
-    }
-
-    public AtomList(Vector<Node> nodes) {
+    public AtomList(Node parent, Vector<Node> nodes) {
+        super(parent);
         setNodes(nodes);
     }
 
@@ -34,7 +36,25 @@ public class AtomList extends SExpression {
     }
 
     public void add(CharSequence atom) {
-        setNodes(nodes.append(new Atom(atom)));
+        setNodes(nodes.append(atom(atom)));
+    }
+
+    public Optional<Integer> findPositionOfNode(Node node) {
+        for (int i = 0; i < nodes.length(); i++) {
+            if (nodes.get(i) == node) {
+                return Optional.of(i);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public Optional<Integer> findPosition(SExpression e) {
+        for (int i = 0; i < list.length(); i++) {
+            if (list.get(i) == e) {
+                return Optional.of(i);
+            }
+        }
+        return Optional.empty();
     }
 
     /**
@@ -78,5 +98,9 @@ public class AtomList extends SExpression {
 
     public boolean isEmpty() {
         return nodes.isEmpty();
+    }
+
+    public Cursor cursor() {
+        return new Cursor(this);
     }
 }

@@ -3,18 +3,22 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.visitor.Visitor;
 
 public class LineTerminator extends Meta {
-	@Override
-	public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
-		return visitor.accept(this, arg);
-	}
+    public LineTerminator(Document document) {
+        super(document);
+    }
 
-	@Override
-	public boolean isLineTerminator() {
-		return true;
-	}
+    @Override
+    public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
+        return visitor.accept(this, arg);
+    }
 
-	@Override
-	public LineTerminator asLineTerminator() {
-		return this;
-	}
+    @Override
+    public boolean isLineTerminator() {
+        return true;
+    }
+
+    @Override
+    public LineTerminator asLineTerminator() {
+        return this;
+    }
 }

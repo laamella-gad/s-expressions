@@ -1,7 +1,9 @@
 package com.laamella.sexpression;
 
 import com.laamella.sexpression.codec.AtomCodec;
-import com.laamella.sexpression.model.*;
+import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.Document;
+import com.laamella.sexpression.model.Node;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -10,6 +12,7 @@ import java.util.Deque;
 import java.util.Optional;
 
 import static com.laamella.sexpression.codec.AtomCodec.*;
+import static com.laamella.sexpression.model.Factory.*;
 
 public class SExpressionsParser implements CharSink, Closeable {
     private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
@@ -22,7 +25,7 @@ public class SExpressionsParser implements CharSink, Closeable {
             for (AtomCodec codec : decodeList) {
                 Optional<byte[]> raw = codec.decode(text);
                 if (raw.isPresent()) {
-                    addToTopList(new Atom(raw.get(), codec));
+                    addToTopList(atom(raw.get(), codec));
                     return;
                 }
             }
@@ -39,17 +42,17 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onWhitespace(String whitespace) {
-            addToTopList(new Whitespace(whitespace));
+            addToTopList(whitespace(whitespace));
         }
 
         @Override
         public void onEndOfLine() {
-            addToTopList(new LineTerminator());
+            addToTopList(nl());
         }
 
         @Override
         public void onListBegin() {
-            stack.push(new AtomList());
+            stack.push(list());
         }
 
         @Override
@@ -69,7 +72,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onComment(String comment) {
-            addToTopList(new Comment(comment));
+            addToTopList(comment(comment));
         }
 
         @Override
@@ -86,7 +89,7 @@ public class SExpressionsParser implements CharSink, Closeable {
         @Override
         public void onOpenStream() {
             stack.clear();
-            document = new Document();
+            document = document();
             callback.onOpenStream();
         }
 

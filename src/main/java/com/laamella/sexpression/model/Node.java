@@ -6,6 +6,10 @@ import com.laamella.sexpression.visitor.Visitor;
 public abstract class Node {
     private Node parent;
 
+    public Node(Node parent) {
+        setParent(parent);
+    }
+
     public abstract <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception;
 
     public boolean isAtom() {
@@ -81,7 +85,7 @@ public abstract class Node {
             return asDocument();
         }
         if (parent == null) {
-            throw new IllegalStateException("Node is not in a document.");
+            setParent(Factory.document());
         }
         return parent.document();
     }
