@@ -3,6 +3,7 @@ package com.laamella.sexpression;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
+import com.laamella.sexpression.model.Factory;
 import com.laamella.sexpression.model.Node;
 
 import java.io.Closeable;
@@ -11,21 +12,18 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
 
-import static com.laamella.sexpression.codec.AtomCodec.*;
-import static com.laamella.sexpression.model.Factory.*;
-
 public class SExpressionsParser implements CharSink, Closeable {
     private final SExpressionsStreamingParser parser = new SExpressionsStreamingParser(new SExpressionsStreamingParser.Callback() {
         private final Deque<AtomList> stack = new ArrayDeque<>();
         private Document document = null;
-        private final AtomCodec[] decodeList = new AtomCodec[]{BASE64, DOUBLE_QUOTE, SIMPLE};
+        private final AtomCodec[] decodeList = new AtomCodec[]{AtomCodec.BASE64, AtomCodec.DOUBLE_QUOTE, AtomCodec.SIMPLE};
 
         @Override
         public void onText(String text) {
             for (AtomCodec codec : decodeList) {
                 Optional<byte[]> raw = codec.decode(text);
                 if (raw.isPresent()) {
-                    addToTopList(atom(raw.get(), codec));
+                    addToTopList(Factory.atom(raw.get(), codec));
                     return;
                 }
             }
@@ -42,17 +40,17 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onWhitespace(String whitespace) {
-            addToTopList(whitespace(whitespace));
+            addToTopList(Factory.whitespace(whitespace));
         }
 
         @Override
         public void onEndOfLine() {
-            addToTopList(nl());
+            addToTopList(Factory.nl());
         }
 
         @Override
         public void onListBegin() {
-            stack.push(list());
+            stack.push(Factory.list());
         }
 
         @Override
@@ -72,7 +70,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onComment(String comment) {
-            addToTopList(comment(comment));
+            addToTopList(Factory.comment(comment));
         }
 
         @Override
@@ -89,7 +87,7 @@ public class SExpressionsParser implements CharSink, Closeable {
         @Override
         public void onOpenStream() {
             stack.clear();
-            document = document();
+            document = Factory.document();
             callback.onOpenStream();
         }
 

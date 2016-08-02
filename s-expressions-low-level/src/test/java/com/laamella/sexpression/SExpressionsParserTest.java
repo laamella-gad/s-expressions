@@ -3,12 +3,10 @@ package com.laamella.sexpression;
 import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 
 public class SExpressionsParserTest {
     private String stream = "";
@@ -45,48 +43,48 @@ public class SExpressionsParserTest {
     @Test
     public void lostAtoms() throws IOException {
         CharSource.pushString("wer ry zcv\n;lost comment\n()", parser);
-        assertEquals("|<|e:()|d:wer ry zcv ()|>", stream);
+        Assert.assertEquals("|<|e:()|d:wer ry zcv ()|>", stream);
     }
 
     @Test
     public void oneExpr() throws IOException {
         CharSource.pushString("(wer ry zcv)", parser);
-        assertEquals("|<|e:(wer ry zcv)|d:(wer ry zcv)|>", stream);
+        Assert.assertEquals("|<|e:(wer ry zcv)|d:(wer ry zcv)|>", stream);
     }
 
     @Test
     public void atomWithWhitespaceGetsQuoted() throws IOException {
         CharSource.pushString("(\"wer ry zcv\")", parser);
         Atom atom = document.list().get(0).asList().list().get(0).asAtom();
-        assertEquals("wer ry zcv", atom.value());
-        assertEquals("|<|e:(\"wer ry zcv\")|d:(\"wer ry zcv\")|>", stream);
+        Assert.assertEquals("wer ry zcv", atom.value());
+        Assert.assertEquals("|<|e:(\"wer ry zcv\")|d:(\"wer ry zcv\")|>", stream);
     }
 
     @Test
     public void atomWithBinaryDataGetsBase64Encoded() throws IOException {
         CharSource.pushString("(abc |AAECAwQFBg==| abc)", parser);
         Atom atom = document.list().get(0).asList().list().get(1).asAtom();
-        assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.raw());
-        assertEquals("|<|e:(abc |AAECAwQFBg==| abc)|d:(abc |AAECAwQFBg==| abc)|>", stream);
+        Assert.assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.raw());
+        Assert.assertEquals("|<|e:(abc |AAECAwQFBg==| abc)|d:(abc |AAECAwQFBg==| abc)|>", stream);
     }
 
 
     @Test
     public void nestedExpr() throws IOException {
         CharSource.pushString("(wer (ry zcv) (1 2) kkk)", parser);
-        assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|d:(wer (ry zcv) (1 2) kkk)|>", stream);
+        Assert.assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|d:(wer (ry zcv) (1 2) kkk)|>", stream);
     }
 
     @Test
     public void tooManyClosingParentheses() throws IOException {
         CharSource.pushString("())", parser);
-        assertEquals("|<|e:()|!:TOO_MANY_CLOSING_PARENTHESES|d:()|>", stream);
+        Assert.assertEquals("|<|e:()|!:TOO_MANY_CLOSING_PARENTHESES|d:()|>", stream);
     }
 
     @Test
     public void unclosedParentheses() throws IOException {
         CharSource.pushString("(", parser);
-        assertEquals("|<|!:UNCLOSED_PARENTHESES|d:|>", stream);
+        Assert.assertEquals("|<|!:UNCLOSED_PARENTHESES|d:|>", stream);
     }
 
 }
