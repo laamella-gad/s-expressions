@@ -13,26 +13,22 @@ public final class Factory {
     }
 
     public static Atom atom(byte[] data, AtomCodec codec) {
-        return new Atom(null, data, codec);
+        return new Atom(null, data, codec, Vector.empty());
     }
 
     public static Atom atom(CharSequence value, AtomCodec codec) {
-        return new Atom(null, codec.decode(value).get(), codec);
+        return new Atom(null, codec.decode(value).get(), codec, Vector.empty());
     }
 
     public static Atom atom(CharSequence value) {
-        return new Atom(null, DEFAULT_STRING_CODEC.decode(value).get(), DEFAULT_STRING_CODEC);
+        return new Atom(null, DEFAULT_STRING_CODEC.decode(value).get(), DEFAULT_STRING_CODEC, Vector.empty());
     }
 
     public static AtomList list(SExpression... nodes) {
-        return new AtomList(null, Vector.of(nodes));
-    }
-
-    public static Comment comment(String text) {
-        return new Comment(text);
+        return new AtomList(null, Vector.of(nodes), Vector.empty());
     }
 
     public static Document document(SExpression... nodes) {
-        return new Document(Vector.of(nodes));
+        return new Document(Vector.of(nodes), Vector.empty(), Vector.empty());
     }
 }

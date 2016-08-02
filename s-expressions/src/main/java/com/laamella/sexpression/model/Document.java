@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.io.Reader;
 
 public class Document extends AtomList {
-    protected Document(Vector<SExpression> nodes) {
-        super(null, nodes);
+    public Vector<String> trailingComments = Vector.empty();
+
+    protected Document(Vector<SExpression> nodes, Vector<String> comments, Vector<String> trailingComments) {
+        super(null, nodes, comments);
+        this.trailingComments = trailingComments;
     }
 
     @Override

@@ -3,13 +3,14 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.visitor.Visitor;
+import javaslang.collection.Vector;
 
 public class Atom extends SExpression {
     private final byte[] data;
     private final AtomCodec codec;
 
-    public Atom(SExpression parent, byte[] data, AtomCodec codec) {
-        super(parent);
+    public Atom(SExpression parent, byte[] data, AtomCodec codec, Vector<String> comments) {
+        super(parent, comments);
         this.data = data;
         this.codec = codec;
     }

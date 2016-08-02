@@ -11,8 +11,8 @@ import static com.laamella.sexpression.visitor.Visitor.EnterDecision;
 public class AtomList extends SExpression {
     private Vector<SExpression> list;
 
-    public AtomList(SExpression parent, Vector<SExpression> nodes) {
-        super(parent);
+    public AtomList(SExpression parent, Vector<SExpression> nodes, Vector<String> comments) {
+        super(parent, comments);
         setNodes(nodes);
     }
 

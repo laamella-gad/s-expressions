@@ -4,7 +4,7 @@ import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
 import com.laamella.sexpression.model.Factory;
-import com.laamella.sexpression.model.Node;
+import com.laamella.sexpression.model.SExpression;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -29,23 +29,24 @@ public class SExpressionsParser implements CharSink, Closeable {
             }
         }
 
-        private void addToTopList(Node node) {
-            if (stack.isEmpty()) {
-                document.add(node);
-            } else {
-                stack.peek().add(node);
-            }
+        private void addToTopList(SExpression node) {
+            getTopList().add(node);
+        }
 
+        private AtomList getTopList() {
+            if (stack.isEmpty()) {
+                return document;
+            } else {
+                return stack.peek();
+            }
         }
 
         @Override
         public void onWhitespace(String whitespace) {
-            addToTopList(Factory.whitespace(whitespace));
         }
 
         @Override
         public void onEndOfLine() {
-            addToTopList(Factory.nl());
         }
 
         @Override
@@ -70,6 +71,7 @@ public class SExpressionsParser implements CharSink, Closeable {
 
         @Override
         public void onComment(String comment) {
+            getTopList()
             addToTopList(Factory.comment(comment));
         }
 
