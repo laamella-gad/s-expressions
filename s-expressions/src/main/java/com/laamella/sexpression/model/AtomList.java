@@ -55,11 +55,10 @@ public class AtomList extends SExpression {
         return Optional.empty();
     }
 
-    public Vector<SExpression> list() {
+    public Vector<SExpression> asVector() {
         return list;
     }
-
-
+    
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
         EnterDecision enter = visitor.enter(this, arg);

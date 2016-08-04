@@ -3,12 +3,12 @@ package com.laamella.sexpression;
 import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 public class SExpressionsParserTest {
 	private String stream = "";
@@ -60,7 +60,7 @@ public class SExpressionsParserTest {
 	@Test
 	public void atomWithWhitespaceGetsQuoted() throws IOException {
 		CharSource.pushString("(\"wer ry zcv\")", parser);
-		Atom atom = document.list().get(0).asList().list().get(0).asAtom();
+		Atom atom = document.asVector().get(0).asVector().get(0).asAtom();
 		assertEquals("wer ry zcv", atom.value());
 		assertEquals("|<|e:(\"wer ry zcv\")|d:(\"wer ry zcv\")|>", stream);
 	}
@@ -68,7 +68,7 @@ public class SExpressionsParserTest {
 	@Test
 	public void atomWithBinaryDataGetsBase64Encoded() throws IOException {
 		CharSource.pushString("(abc |AAECAwQFBg==| abc)", parser);
-		Atom atom = document.list().get(0).asList().list().get(1).asAtom();
+		Atom atom = document.asVector().get(0).asVector().get(1).asAtom();
 		assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.raw());
 		assertEquals("|<|e:(abc |AAECAwQFBg==| abc)|d:(abc |AAECAwQFBg==| abc)|>", stream);
 	}

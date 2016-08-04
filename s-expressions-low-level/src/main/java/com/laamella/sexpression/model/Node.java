@@ -2,6 +2,7 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.StructuralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
+import javaslang.collection.Vector;
 
 public abstract class Node {
     private Node parent;
@@ -49,6 +50,10 @@ public abstract class Node {
     }
 
     public AtomList asList() {
+        throw new IllegalStateException();
+    }
+    
+    public Vector<Node> asVector() {
         throw new IllegalStateException();
     }
 

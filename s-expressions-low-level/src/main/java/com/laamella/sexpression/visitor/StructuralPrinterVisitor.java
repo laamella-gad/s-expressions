@@ -17,7 +17,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 
 	@Override
 	public Void accept(AtomList atomList, Appendable output) throws Exception {
-		print(atomList.nodes(), output);
+		print(atomList.asVector(), output);
 		return null;
 	}
 
@@ -57,7 +57,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 
 	@Override
 	public Void accept(Document document, Appendable output) throws Exception {
-		print(document.nodes(), output);
+		print(document.asVector(), output);
 		return null;
 	}
 

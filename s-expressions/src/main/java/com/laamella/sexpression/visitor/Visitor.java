@@ -1,6 +1,9 @@
 package com.laamella.sexpression.visitor;
 
-import com.laamella.sexpression.model.*;
+import com.laamella.sexpression.model.Atom;
+import com.laamella.sexpression.model.AtomList;
+import com.laamella.sexpression.model.Document;
+import com.laamella.sexpression.model.SExpression;
 
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
@@ -31,7 +34,7 @@ public interface Visitor<A, R> {
 
         @Override
         public R accept(AtomList atomList, A arg) throws Exception {
-            for (SExpression n : atomList.list()) {
+            for (SExpression n : atomList.asVector()) {
                 n.visit(this, arg);
             }
             return null;
@@ -57,7 +60,7 @@ public interface Visitor<A, R> {
 
         @Override
         public R accept(Document document, A arg) throws Exception {
-            for (SExpression n : document.list()) {
+            for (SExpression n : document.asVector()) {
                 n.visit(this, arg);
             }
             return null;

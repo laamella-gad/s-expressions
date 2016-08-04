@@ -17,7 +17,7 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
 
     @Override
     public Void accept(AtomList atomList, Appendable output) throws Exception {
-        visit(atomList.nodes(), output);
+        visit(atomList.asVector(), output);
         return null;
     }
 
@@ -50,7 +50,7 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
 
     @Override
     public Void accept(Document document, Appendable output) throws Exception {
-        visit(document.nodes(), output);
+        visit(document.asVector(), output);
         return null;
     }
 

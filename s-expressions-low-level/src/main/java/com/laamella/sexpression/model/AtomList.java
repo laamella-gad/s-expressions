@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import static com.laamella.sexpression.model.Factory.atom;
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision;
+import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
 public class AtomList extends SExpression {
     private Vector<Node> nodes;
@@ -47,17 +48,14 @@ public class AtomList extends SExpression {
         return Optional.empty();
     }
 
-    /**
-     * @return all the nodes here, including comments, whitespace, etc.
-     */
-    public Vector<Node> nodes() {
+    public Vector<Node> asVector() {
         return nodes;
     }
 
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
         EnterDecision enter = visitor.enter(this, arg);
-        if (enter == EnterDecision.ENTER) {
+        if (enter == ENTER) {
             R r = visitor.accept(this, arg);
             visitor.exit(this, r, arg);
             return r;

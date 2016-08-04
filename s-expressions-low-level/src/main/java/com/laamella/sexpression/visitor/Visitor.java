@@ -37,7 +37,7 @@ public interface Visitor<A, R> {
 
         @Override
         public R accept(AtomList atomList, A arg) throws Exception {
-            for (Node n : atomList.nodes()) {
+            for (Node n : atomList.asVector()) {
                 n.visit(this, arg);
             }
             return null;
@@ -63,7 +63,7 @@ public interface Visitor<A, R> {
 
         @Override
         public R accept(Document document, A arg) throws Exception {
-            for (Node n : document.nodes()) {
+            for (Node n : document.asVector()) {
                 n.visit(this, arg);
             }
             return null;

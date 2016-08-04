@@ -34,7 +34,7 @@ public class Cursor {
     }
 
     private void insertNode(Node node) {
-        list.setNodes(list.nodes().insert(position, node));
+        list.setNodes(list.asVector().insert(position, node));
         position++;
     }
 
@@ -51,12 +51,12 @@ public class Cursor {
     }
 
     private Node nodeAt(int i) {
-        return list.nodes().get(i);
+        return list.asVector().get(i);
     }
 
     public Cursor goToNext(Predicate<Node> check) {
         // TODO needs a position++ here
-        while (!atEnd() && !check.test(list.nodes().get(position))) {
+        while (!atEnd() && !check.test(list.asVector().get(position))) {
             position++;
         }
         return this;
@@ -64,7 +64,7 @@ public class Cursor {
 
     private void goToPrevious(Predicate<Node> check) {
         // TODO needs a position-- here
-        while (!atFirstNode() && !check.test(list.nodes().get(position))) {
+        while (!atFirstNode() && !check.test(list.asVector().get(position))) {
             position--;
         }
     }
@@ -97,7 +97,7 @@ public class Cursor {
     }
 
     public Cursor goToEnd() {
-        position = list.nodes().length();
+        position = list.asVector().length();
         return this;
     }
 
@@ -110,7 +110,7 @@ public class Cursor {
         if (atEnd()) {
             return Optional.empty();
         }
-        return Optional.of(list.nodes().get(position));
+        return Optional.of(list.asVector().get(position));
     }
 
     public Document document() {
@@ -118,7 +118,7 @@ public class Cursor {
     }
 
     public boolean atEnd() {
-        return position >= list.nodes().size();
+        return position >= list.asVector().size();
     }
 
     public boolean atFirstNode() {

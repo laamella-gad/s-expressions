@@ -27,12 +27,23 @@ public abstract class SExpression {
     public boolean isDocument() {
         return false;
     }
-    
+
     public Atom asAtom() {
         throw new IllegalStateException();
     }
 
     public AtomList asList() {
+        throw new IllegalStateException();
+    }
+
+    /**
+     * AtomList and Document contain their elements in an internal Vector.
+     * This methods returns it.
+     * It is a getter camouflaged as a type cast.
+     *
+     * @return the contents of this node as a vector.
+     */
+    public Vector<SExpression> asVector() {
         throw new IllegalStateException();
     }
 
