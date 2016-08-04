@@ -3,6 +3,7 @@ package com.laamella.sexpression.properties;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
 import com.laamella.sexpression.model.SExpression;
+import com.laamella.sexpression.visitor.PrettyPrinterVisitor;
 import com.laamella.sexpression.visitor.PrinterVisitor;
 
 import java.io.IOException;
@@ -120,7 +121,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
 
 
     public void save(Appendable appendable) throws Exception {
-        document.visit(new PrinterVisitor(), appendable);
+        document.visit(new PrettyPrinterVisitor(), appendable);
     }
 
     private Optional<String> eval(Callback callback) {
