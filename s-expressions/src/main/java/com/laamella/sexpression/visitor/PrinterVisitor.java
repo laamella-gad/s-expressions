@@ -1,12 +1,11 @@
 package com.laamella.sexpression.visitor;
 
+import com.laamella.sexpression.model.*;
 import javaslang.collection.Seq;
 
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
 public class PrinterVisitor implements Visitor<Appendable, Void> {
-	public static final PrinterVisitor TO_STRING = new PrinterVisitor();
-
 	@Override
 	public Void accept(Atom atom, Appendable output) throws Exception {
 		output.append(atom.encoded());

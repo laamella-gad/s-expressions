@@ -5,6 +5,8 @@ import com.laamella.sexpression.model.*;
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
 public interface Visitor<A, R> {
+    Visitor<Appendable, Void> TO_STRING = new PrinterVisitor();
+
     enum EnterDecision {ENTER, DONT_ENTER}
 
     R accept(Atom atom, A arg) throws Exception;
