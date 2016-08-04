@@ -71,7 +71,14 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
         });
         if (!oldValue.isPresent()) {
             // lazy solution
-            document.setNodes(document.asVector().append(list(atom(searchKey), atom(newValue))));
+            String[] path = searchKey.split("\\.");
+            AtomList l = document;
+            for (String p : path) {
+                AtomList newList = list(atom(p));
+                l.setNodes(l.asVector().append(newList));
+                l = newList;
+            }
+            l.add(atom(newValue));
         }
         return oldValue;
     }
