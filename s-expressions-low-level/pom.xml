@@ -4,7 +4,7 @@
     <parent>
         <artifactId>s-expressions-parent</artifactId>
         <groupId>com.laamella</groupId>
-        <version>0.2</version>
+        <version>0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>s-expressions-low-level</artifactId>
@@ -14,7 +14,7 @@
         <dependency>
             <groupId>com.laamella</groupId>
             <artifactId>s-expressions-core</artifactId>
-            <version>0.2</version>
+            <version>0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

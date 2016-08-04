@@ -4,7 +4,7 @@
 
     <groupId>com.laamella</groupId>
     <artifactId>s-expressions-parent</artifactId>
-    <version>0.2</version>
+    <version>0.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
@@ -106,7 +106,7 @@
         <connection>scm:git:git@github.com:laamella-gad/s-expressions.git</connection>
         <developerConnection>scm:git:git@github.com:laamella-gad/s-expressions.git</developerConnection>
         <url>https://github.com/laamella-gad/s-expressions.git</url>
-        <tag>s-expressions-parent-0.2</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <licenses>
