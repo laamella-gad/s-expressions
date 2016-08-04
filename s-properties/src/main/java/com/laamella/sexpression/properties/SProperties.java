@@ -4,7 +4,6 @@ import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
 import com.laamella.sexpression.model.SExpression;
 import com.laamella.sexpression.visitor.PrettyPrinterVisitor;
-import com.laamella.sexpression.visitor.PrinterVisitor;
 
 import java.io.IOException;
 import java.io.Reader;

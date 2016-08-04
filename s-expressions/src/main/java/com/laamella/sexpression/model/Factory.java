@@ -29,6 +29,6 @@ public final class Factory {
     }
 
     public static Document document(SExpression... nodes) {
-        return new Document(Vector.of(nodes), Vector.empty(), Vector.empty());
+        return new Document(Vector.of(nodes), Vector.empty());
     }
 }

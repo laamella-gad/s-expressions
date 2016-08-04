@@ -1,6 +1,5 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.SExpressionsParser;
 import com.laamella.sexpression.SExpressionsParser.Callback.DocumentGrabbingCallback;
 import com.laamella.sexpression.SExpressionsStreamingLexer;
@@ -11,12 +10,11 @@ import javaslang.collection.Vector;
 import java.io.IOException;
 import java.io.Reader;
 
-public class Document extends AtomList {
-	public Vector<String> trailingComments = Vector.empty();
+import static com.laamella.sexpression.CharSource.*;
 
-	protected Document(Vector<SExpression> nodes, Vector<String> comments, Vector<String> trailingComments) {
+public class Document extends AtomList {
+	public Document(Vector<SExpression> nodes, Vector<String> comments) {
 		super(null, nodes, comments);
-		this.trailingComments = trailingComments;
 	}
 
 	@Override
@@ -50,7 +48,7 @@ public class Document extends AtomList {
 				new SExpressionsStreamingLexer(
 						new SExpressionsStreamingParser(
 								new SExpressionsParser(callback)));
-		CharSource.push(reader, parser);
+		push(reader, parser);
 		return callback.document;
 	}
 
@@ -60,7 +58,7 @@ public class Document extends AtomList {
 				new SExpressionsStreamingLexer(
 						new SExpressionsStreamingParser(
 								new SExpressionsParser(callback)));
-		CharSource.pushResource(resourceName, CharSource.UTF8, parser);
+		pushResource(resourceName, UTF8, parser);
 		return callback.document;
 	}
 
@@ -70,7 +68,7 @@ public class Document extends AtomList {
 				new SExpressionsStreamingLexer(
 						new SExpressionsStreamingParser(
 								new SExpressionsParser(callback)));
-		CharSource.pushString(string, parser);
+		pushString(string, parser);
 		return callback.document;
 	}
 }

@@ -11,6 +11,7 @@ public class Samples {
         SProperties properties = new SProperties();
         properties.loadResource("/config.s");
 
+        properties.get("greeting").ifPresent(System.out::println);
         properties.get("application.window.height").ifPresent(System.out::println);
         properties.set("application.window.height", "500");
         properties.set("this.is.new", "Hurray! New!");
