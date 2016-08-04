@@ -9,8 +9,6 @@ import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
  * Prints only lists and atoms.
  */
 public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
-    public static final StructuralPrinterVisitor TO_STRING = new StructuralPrinterVisitor();
-
     @Override
     public Void accept(Atom atom, Appendable output) throws Exception {
         output.append(atom.encoded());

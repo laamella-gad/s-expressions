@@ -1,13 +1,9 @@
 package com.laamella.sexpression.visitor;
 
-import com.laamella.sexpression.model.*;
 import javaslang.collection.Seq;
 
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
-/**
- * Prints only lists and atoms.
- */
 public class PrinterVisitor implements Visitor<Appendable, Void> {
 	public static final PrinterVisitor TO_STRING = new PrinterVisitor();
 
