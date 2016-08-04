@@ -19,9 +19,7 @@ public class StructuralPrinterVisitor implements Visitor<Appendable, Void> {
 
     @Override
     public Void accept(AtomList atomList, Appendable output) throws Exception {
-        output.append('(');
         print(atomList.list(), output);
-        output.append(')');
         return null;
     }
 

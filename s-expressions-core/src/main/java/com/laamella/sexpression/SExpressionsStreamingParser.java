@@ -1,172 +1,156 @@
 package com.laamella.sexpression;
 
-import java.io.Closeable;
-import java.io.IOException;
+public class SExpressionsStreamingParser implements SExpressionsStreamingLexer.Callback {
+	private boolean inQuotes;
+	private StringBuilder accumulator;
+	private boolean inComment;
+	private boolean nothingButWhitespaceOnThisNewLine;
 
-public class SExpressionsStreamingParser implements CharSink, Closeable {
-    private final SExpressionsStreamingLexer.Callback lexerCallback = new SExpressionsStreamingLexer.Callback() {
-        private boolean inQuotes;
-        private StringBuilder accumulator;
-        private boolean inComment;
-        private boolean nothingButWhitespaceOnThisNewLine;
+	private final Callback callback;
 
-        @Override
-        public void onText(String text, long start, long end) {
-            if (inComment) {
-                accumulator.append(text);
-                return;
-            }
-            nothingButWhitespaceOnThisNewLine = false;
-            if (inQuotes) {
-                accumulator.append(text);
-            } else {
-                callback.onText(text);
-            }
-        }
+	public SExpressionsStreamingParser(Callback callback) {
+		this.callback = callback;
+	}
 
-        @Override
-        public void onWhitespace(String whitespace, long start, long end) {
-            if (inComment || inQuotes) {
-                accumulator.append(whitespace);
-            } else {
-                callback.onWhitespace(whitespace);
-            }
-        }
+	@Override
+	public void onText(String text, long start, long end) {
+		if (inComment) {
+			accumulator.append(text);
+			return;
+		}
+		nothingButWhitespaceOnThisNewLine = false;
+		if (inQuotes) {
+			accumulator.append(text);
+		} else {
+			callback.onText(text);
+		}
+	}
 
-        @Override
-        public void onOpeningBrace(char b, long pos) {
-            if (inComment) {
-                accumulator.appendCodePoint(b);
-                return;
-            }
-            nothingButWhitespaceOnThisNewLine = false;
-            if (inQuotes) {
-                accumulator.appendCodePoint(b);
-            } else {
-                callback.onListBegin();
-            }
-        }
+	@Override
+	public void onWhitespace(String whitespace, long start, long end) {
+		if (inComment || inQuotes) {
+			accumulator.append(whitespace);
+		} else {
+			callback.onWhitespace(whitespace);
+		}
+	}
 
-        @Override
-        public void onClosingBrace(char b, long pos) {
-            if (inComment) {
-                accumulator.appendCodePoint(b);
-                return;
-            }
-            nothingButWhitespaceOnThisNewLine = false;
-            if (inQuotes) {
-                accumulator.appendCodePoint(b);
-            } else {
-                callback.onListEnd();
-            }
-        }
+	@Override
+	public void onOpeningBrace(char b, long pos) {
+		if (inComment) {
+			accumulator.appendCodePoint(b);
+			return;
+		}
+		nothingButWhitespaceOnThisNewLine = false;
+		if (inQuotes) {
+			accumulator.appendCodePoint(b);
+		} else {
+			callback.onListBegin();
+		}
+	}
 
-        @Override
-        public void onQuote(char q, long pos) {
-            if (inComment) {
-                accumulator.appendCodePoint(q);
-                return;
-            }
-            nothingButWhitespaceOnThisNewLine = false;
-            if (inQuotes) {
-                accumulator.appendCodePoint(q);
-                callback.onText(accumulator.toString());
-                accumulator = new StringBuilder();
-                inQuotes = false;
-            } else {
-                inQuotes = true;
-                accumulator.appendCodePoint(q);
-            }
+	@Override
+	public void onClosingBrace(char b, long pos) {
+		if (inComment) {
+			accumulator.appendCodePoint(b);
+			return;
+		}
+		nothingButWhitespaceOnThisNewLine = false;
+		if (inQuotes) {
+			accumulator.appendCodePoint(b);
+		} else {
+			callback.onListEnd();
+		}
+	}
 
-        }
+	@Override
+	public void onQuote(char q, long pos) {
+		if (inComment) {
+			accumulator.appendCodePoint(q);
+			return;
+		}
+		nothingButWhitespaceOnThisNewLine = false;
+		if (inQuotes) {
+			accumulator.appendCodePoint(q);
+			callback.onText(accumulator.toString());
+			accumulator = new StringBuilder();
+			inQuotes = false;
+		} else {
+			inQuotes = true;
+			accumulator.appendCodePoint(q);
+		}
 
-        @Override
-        public void onCloseStream() {
-            if (inQuotes) {
-                callback.onError(Error.STREAM_ENDED_WHILE_IN_QUOTES);
-            }
-            if (inComment) {
-                callback.onComment(accumulator.toString());
-            }
-            callback.onCloseStream();
-        }
+	}
 
-        @Override
-        public void onOpenStream() {
-            inQuotes = false;
-            accumulator = new StringBuilder();
-            inComment = false;
-            nothingButWhitespaceOnThisNewLine = true;
-            callback.onOpenStream();
-        }
+	@Override
+	public void onCloseStream() {
+		if (inQuotes) {
+			callback.onError(Error.STREAM_ENDED_WHILE_IN_QUOTES);
+		}
+		if (inComment) {
+			callback.onComment(accumulator.toString());
+		}
+		callback.onCloseStream();
+	}
 
-        @Override
-        public void onComment(char c, long pos) {
-            if (inComment) {
-                accumulator.appendCodePoint(c);
-                return;
-            }
-            if (inQuotes) {
-                accumulator.append(c);
-            } else if (nothingButWhitespaceOnThisNewLine) {
-                inComment = true;
-            }
-        }
+	@Override
+	public void onOpenStream() {
+		inQuotes = false;
+		accumulator = new StringBuilder();
+		inComment = false;
+		nothingButWhitespaceOnThisNewLine = true;
+		callback.onOpenStream();
+	}
 
-        @Override
-        public void onEndOfLine(long pos) {
-            if (inQuotes) {
-                accumulator.append("\n");
-            } else {
-                if (inComment) {
-                    callback.onComment(accumulator.toString());
-                    accumulator = new StringBuilder();
-                }
-                callback.onEndOfLine();
-            }
-            nothingButWhitespaceOnThisNewLine = true;
-            inComment = false;
-        }
-    };
+	@Override
+	public void onComment(char c, long pos) {
+		if (inComment) {
+			accumulator.appendCodePoint(c);
+			return;
+		}
+		if (inQuotes) {
+			accumulator.append(c);
+		} else if (nothingButWhitespaceOnThisNewLine) {
+			inComment = true;
+		}
+	}
 
-    private final SExpressionsStreamingLexer lexer = new SExpressionsStreamingLexer(lexerCallback);
+	@Override
+	public void onEndOfLine(long pos) {
+		if (inQuotes) {
+			accumulator.append("\n");
+		} else {
+			if (inComment) {
+				callback.onComment(accumulator.toString());
+				accumulator = new StringBuilder();
+			}
+			callback.onEndOfLine();
+		}
+		nothingButWhitespaceOnThisNewLine = true;
+		inComment = false;
+	}
 
-    private final Callback callback;
 
-    public SExpressionsStreamingParser(Callback callback) {
-        this.callback = callback;
-    }
+	public enum Error {STREAM_ENDED_WHILE_IN_QUOTES}
 
-    @Override
-    public void accept(char c) {
-        lexer.accept(c);
-    }
+	public interface Callback {
 
-    @Override
-    public void close() throws IOException {
-        lexer.close();
-    }
+		void onText(String text);
 
-    public enum Error {STREAM_ENDED_WHILE_IN_QUOTES}
+		void onWhitespace(String whitespace);
 
-    public interface Callback {
+		void onEndOfLine();
 
-        void onText(String text);
+		void onListBegin();
 
-        void onWhitespace(String whitespace);
+		void onListEnd();
 
-        void onEndOfLine();
+		void onComment(String comment);
 
-        void onListBegin();
+		void onError(Error error);
 
-        void onListEnd();
+		void onOpenStream();
 
-        void onComment(String comment);
-
-        void onError(Error error);
-
-        void onOpenStream();
-
-        void onCloseStream();
-    }
+		void onCloseStream();
+	}
 }

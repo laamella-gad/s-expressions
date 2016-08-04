@@ -3,6 +3,8 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.SExpressionsParser;
 import com.laamella.sexpression.SExpressionsParser.Callback.DocumentGrabbingCallback;
+import com.laamella.sexpression.SExpressionsStreamingLexer;
+import com.laamella.sexpression.SExpressionsStreamingParser;
 import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
 
@@ -41,21 +43,30 @@ public class Document extends AtomList {
 
     public static Document from(Reader reader) throws IOException {
         DocumentGrabbingCallback callback = new DocumentGrabbingCallback();
-        final SExpressionsParser parser = new SExpressionsParser(callback);
+        final SExpressionsStreamingLexer parser =
+                new SExpressionsStreamingLexer(
+                        new SExpressionsStreamingParser(
+                                new SExpressionsParser(callback)));
         CharSource.push(reader, parser);
         return callback.document;
     }
 
     public static Document fromResource(String resourceName) throws IOException {
         DocumentGrabbingCallback callback = new DocumentGrabbingCallback();
-        final SExpressionsParser parser = new SExpressionsParser(callback);
+        final SExpressionsStreamingLexer parser =
+                new SExpressionsStreamingLexer(
+                        new SExpressionsStreamingParser(
+                                new SExpressionsParser(callback)));
         CharSource.pushResource(resourceName, CharSource.UTF8, parser);
         return callback.document;
     }
 
     public static Document fromString(String string) {
         DocumentGrabbingCallback callback = new DocumentGrabbingCallback();
-        final SExpressionsParser parser = new SExpressionsParser(callback);
+        final SExpressionsStreamingLexer parser =
+                new SExpressionsStreamingLexer(
+                        new SExpressionsStreamingParser(
+                                new SExpressionsParser(callback)));
         CharSource.pushString(string, parser);
         return callback.document;
     }

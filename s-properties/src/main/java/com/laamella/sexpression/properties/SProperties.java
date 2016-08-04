@@ -2,7 +2,6 @@ package com.laamella.sexpression.properties;
 
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
-import com.laamella.sexpression.visitor.LiteralPrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
 
@@ -55,23 +54,23 @@ public class SProperties //implements Iterable<Map.Entry<String, String>>
 //		store.put(key, value);
 //	}
 
-    public Optional<String> get(String key) {
-        Vector<String> keyparts = Vector.of(key.split("\\."));
-
-        try {
-            return document.visit(new Visitor.Adapter<Void, Optional<String>>() {
-                
-                @Override
-                public EnterDecision enter(AtomList atomList, Void arg) throws Exception {
-                    return super.enter(atomList, arg);
-                }
-
-            }, null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+//    public Optional<String> get(String key) {
+//        Vector<String> keyparts = Vector.of(key.split("\\."));
+//
+//        try {
+//            return document.visit(new Visitor.Adapter<Void, Optional<String>>() {
+//
+//                @Override
+//                public EnterDecision enter(AtomList atomList, Void arg) throws Exception {
+//                    return super.enter(atomList, arg);
+//                }
+//
+//            }, null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
+//
 //	public String get(String key, String def) {
 //		return store.getOrDefault(key, def);
 //	}
@@ -84,7 +83,7 @@ public class SProperties //implements Iterable<Map.Entry<String, String>>
 
     // TODO make better
     public void print() {
-        LiteralPrinterVisitor visitor = new LiteralPrinterVisitor();
+//        LiteralPrinterVisitor visitor = new LiteralPrinterVisitor();
         // TODO should have
     }
 
