@@ -1,12 +1,9 @@
-package com.laamella.sexpression.utils;
+package com.laamella.sexpression;
 
 import com.laamella.sexpression.model.*;
 
 import java.util.Optional;
 import java.util.function.Predicate;
-
-import static com.laamella.sexpression.model.Factory.atom;
-import static com.laamella.sexpression.model.Factory.space;
 
 public class Cursor {
     private AtomList list;
@@ -29,28 +26,10 @@ public class Cursor {
      * Insert the nodes.
      * Afterwards, the cursor is just after the inserted nodes.
      */
-    public Cursor insertNodes(Node... newNodes) {
+    public Cursor insert(Node... newNodes) {
         for (Node n : newNodes) {
             insertNode(n);
         }
-        return this;
-    }
-
-    public Cursor insert(String... atoms) {
-        for (String s : atoms) {
-            insertSpaceBefore();
-            insertNode(atom(s));
-        }
-        insertSpaceAfter();
-        return this;
-    }
-
-    public Cursor insert(SExpression... exprs) {
-        for (SExpression s : exprs) {
-            insertSpaceBefore();
-            insertNode(s);
-        }
-        insertSpaceAfter();
         return this;
     }
 
@@ -64,72 +43,40 @@ public class Cursor {
      * Afterwards, the cursor is at the start of the new list.
      */
     public Cursor insertAndEnterList() {
-        insertSpaceBefore();
         AtomList newList = Factory.list();
         insertNode(newList);
-        insertSpaceAfter();
         list = newList;
         position = 0;
         return this;
-    }
-
-    private void insertSpaceBefore() {
-        if (!atFirstNode()) {
-            if (!nodeAt(position - 1).isWhitespace()) {
-                insertNode(space());
-            }
-        }
-    }
-
-    private void insertSpaceAfter() {
-        if (!atEnd()) {
-            if (!nodeAt(position).isWhitespace()) {
-                insertNode(space());
-            }
-        }
     }
 
     private Node nodeAt(int i) {
         return list.nodes().get(i);
     }
 
-    public Cursor goForward() {
-        if (!atEnd()) {
-            position++;
-        }
-        goToNext(Node::isSExpression);
-        return this;
-    }
-
     public Cursor goToNext(Predicate<Node> check) {
+        // TODO needs a position++ here
         while (!atEnd() && !check.test(list.nodes().get(position))) {
             position++;
         }
         return this;
     }
 
-    public Cursor goBackward() {
-        if (!atFirstNode()) {
-            position--;
-            goToPrevious(Node::isSExpression);
-        }
-        return this;
-    }
-
     private void goToPrevious(Predicate<Node> check) {
+        // TODO needs a position-- here
         while (!atFirstNode() && !check.test(list.nodes().get(position))) {
             position--;
         }
     }
 
-    public Cursor goForwardNode() {
+    public Cursor goForward() {
         if (!atEnd()) {
             position++;
         }
         return this;
     }
 
-    public Cursor goBackwardNode() {
+    public Cursor goBackward() {
         if (!atFirstNode()) {
             position--;
         }
@@ -139,7 +86,7 @@ public class Cursor {
     public Cursor exitList() {
         AtomList oldList = list;
         list = list.parent().asList();
-        position = list.findPositionOfNode(oldList).get();
+        position = list.findPosition(oldList).get();
         return this;
     }
 
@@ -183,7 +130,7 @@ public class Cursor {
     }
 
     public Cursor goTo(Node node) {
-        list.findPositionOfNode(node).ifPresent(p -> position = p);
+        list.findPosition(node).ifPresent(p -> position = p);
         return this;
     }
 

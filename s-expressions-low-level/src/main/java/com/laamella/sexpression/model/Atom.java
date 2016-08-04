@@ -1,12 +1,9 @@
 package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.CharSource;
+import com.laamella.sexpression.Cursor;
 import com.laamella.sexpression.codec.AtomCodec;
-import com.laamella.sexpression.codec.CombinedCodec;
-import com.laamella.sexpression.utils.Cursor;
 import com.laamella.sexpression.visitor.Visitor;
-
-import static com.laamella.sexpression.codec.AtomCodec.*;
 
 public class Atom extends SExpression {
     private final byte[] data;

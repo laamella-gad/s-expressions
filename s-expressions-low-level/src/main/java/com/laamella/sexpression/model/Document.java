@@ -1,6 +1,5 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.SExpressionsParser;
 import com.laamella.sexpression.SExpressionsParser.Callback.DocumentGrabbingCallback;
 import com.laamella.sexpression.SExpressionsStreamingLexer;
@@ -10,6 +9,9 @@ import javaslang.collection.Vector;
 
 import java.io.IOException;
 import java.io.Reader;
+
+import static com.laamella.sexpression.CharSource.*;
+import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
 public class Document extends AtomList {
     protected Document(Vector<Node> nodes) {
@@ -23,7 +25,7 @@ public class Document extends AtomList {
 
     @Override
     public <A, R> R visit(Visitor<A, R> visitor, A arg) throws Exception {
-        if (visitor.enter(this, arg) == Visitor.EnterDecision.ENTER) {
+        if (visitor.enter(this, arg) == ENTER) {
             R r = visitor.accept(this, arg);
             visitor.exit(this, r, arg);
             return r;
@@ -47,7 +49,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsParser(callback)));
-        CharSource.push(reader, parser);
+        push(reader, parser);
         return callback.document;
     }
 
@@ -57,7 +59,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsParser(callback)));
-        CharSource.pushResource(resourceName, CharSource.UTF8, parser);
+        pushResource(resourceName, UTF8, parser);
         return callback.document;
     }
 
@@ -67,7 +69,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsParser(callback)));
-        CharSource.pushString(string, parser);
+        pushString(string, parser);
         return callback.document;
     }
 }
