@@ -69,7 +69,7 @@ public class SExpressionsParserTest {
 	public void atomWithBinaryDataGetsBase64Encoded() throws IOException {
 		pushString("(abc |AAECAwQFBg==| abc)", parser);
 		Atom atom = document.asVector().get(0).asList().asVector().get(2).asAtom();
-		assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.raw());
+		assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.data);
 		assertEquals("|<|e:(abc |AAECAwQFBg==| abc)|d:(abc |AAECAwQFBg==| abc)|>", stream);
 	}
 

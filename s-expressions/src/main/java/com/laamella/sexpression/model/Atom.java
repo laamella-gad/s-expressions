@@ -6,8 +6,8 @@ import com.laamella.sexpression.visitor.Visitor;
 import javaslang.collection.Vector;
 
 public class Atom extends SExpression {
-    private final byte[] data;
-    private final AtomCodec codec;
+    public byte[] data;
+    public AtomCodec codec;
 
     public Atom(SExpression parent, byte[] data, AtomCodec codec, Vector<String> comments) {
         super(parent, comments);
@@ -20,13 +20,6 @@ public class Atom extends SExpression {
      */
     public String encoded() {
         return codec.encode(data).get();
-    }
-
-    /**
-     * @return the raw bytes represented by this atom.
-     */
-    public byte[] raw() {
-        return data;
     }
 
     /**
