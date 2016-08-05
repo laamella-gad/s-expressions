@@ -3,8 +3,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.laamella</groupId>
-    <artifactId>s-expressions</artifactId>
-    <version>0.2-SNAPSHOT</version>
+    <artifactId>s-expressions-parent</artifactId>
+    <version>0.3-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>S-Expression support for Java</description>
@@ -13,6 +14,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <modules>
+        <module>s-expressions-core</module>
+        <module>s-expressions-low-level</module>
+        <module>s-expressions</module>
+        <module>s-properties</module>
+    </modules>
 
     <developers>
         <developer>
@@ -23,20 +31,22 @@
         </developer>
     </developers>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.javaslang</groupId>
-            <artifactId>javaslang</artifactId>
-            <version>2.0.2</version>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.javaslang</groupId>
+                <artifactId>javaslang</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    
     <build>
         <plugins>
             <plugin>
@@ -91,7 +101,7 @@
             <url>https://api.bintray.com/maven/laamella-gad/com.laamella/s-expressions</url>
         </repository>
     </distributionManagement>
-    
+
     <scm>
         <connection>scm:git:git@github.com:laamella-gad/s-expressions.git</connection>
         <developerConnection>scm:git:git@github.com:laamella-gad/s-expressions.git</developerConnection>
