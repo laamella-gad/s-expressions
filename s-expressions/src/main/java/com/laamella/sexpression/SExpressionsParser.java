@@ -5,7 +5,7 @@ import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
 import com.laamella.sexpression.model.SExpression;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

@@ -1,7 +1,7 @@
 package com.laamella.sexpression.visitor;
 
 import com.laamella.sexpression.model.*;
-import javaslang.collection.Seq;
+import io.vavr.collection.Seq;
 
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 
@@ -33,12 +33,12 @@ public class LiteralPrinterVisitor implements Visitor<Appendable, Void> {
     }
 
     @Override
-    public EnterDecision enter(Document document, Appendable output) throws Exception {
+    public EnterDecision enter(Document document, Appendable output) {
         return ENTER;
     }
 
     @Override
-    public void exit(Document document, Void result, Appendable output) throws Exception {
+    public void exit(Document document, Void result, Appendable output) {
 
     }
 

@@ -2,7 +2,7 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.Cursor;
 import com.laamella.sexpression.visitor.Visitor;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 import java.util.Optional;
 

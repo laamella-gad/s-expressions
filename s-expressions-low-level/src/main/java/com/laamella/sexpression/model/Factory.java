@@ -2,7 +2,7 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.codec.CombinedCodec;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 import static com.laamella.sexpression.codec.AtomCodec.*;
 

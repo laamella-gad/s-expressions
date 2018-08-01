@@ -2,10 +2,10 @@ package com.laamella.sexpression.model;
 
 import com.laamella.sexpression.visitor.PrinterVisitor;
 import com.laamella.sexpression.visitor.Visitor;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 public abstract class SExpression {
-    public Vector<String> comments = Vector.empty();
+    public Vector<String> comments;
 
     private SExpression parent;
 

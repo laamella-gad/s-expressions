@@ -3,7 +3,7 @@ package com.laamella.sexpression.model;
 import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.visitor.Visitor;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 public class Atom extends SExpression {
     public byte[] data;

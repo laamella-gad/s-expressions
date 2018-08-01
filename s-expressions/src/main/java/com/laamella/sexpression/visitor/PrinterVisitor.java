@@ -1,7 +1,7 @@
 package com.laamella.sexpression.visitor;
 
 import com.laamella.sexpression.model.*;
-import javaslang.collection.Seq;
+import io.vavr.collection.Seq;
 
 import static com.laamella.sexpression.visitor.Visitor.EnterDecision.ENTER;
 

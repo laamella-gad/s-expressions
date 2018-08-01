@@ -5,7 +5,7 @@ import com.laamella.sexpression.SExpressionsParser.Callback.DocumentGrabbingCall
 import com.laamella.sexpression.SExpressionsStreamingLexer;
 import com.laamella.sexpression.SExpressionsStreamingParser;
 import com.laamella.sexpression.visitor.Visitor;
-import javaslang.collection.Vector;
+import io.vavr.collection.Vector;
 
 import java.io.IOException;
 import java.io.Reader;
