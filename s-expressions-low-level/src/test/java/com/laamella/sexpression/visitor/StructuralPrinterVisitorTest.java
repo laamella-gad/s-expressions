@@ -1,9 +1,9 @@
 package com.laamella.sexpression.visitor;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.laamella.sexpression.model.Factory.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StructuralPrinterVisitorTest {
 	private final StructuralPrinterVisitor visitor = new StructuralPrinterVisitor();

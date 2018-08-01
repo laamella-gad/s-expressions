@@ -1,8 +1,8 @@
 package com.laamella.sexpression;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SExpressionsStreamingParserTest {
 	private String result = "";
@@ -58,76 +58,76 @@ public class SExpressionsStreamingParserTest {
 							}));
 
 	@Test
-	public void lostAtoms() throws Exception {
+	public void lostAtoms() {
 		CharSource.pushString("wer ry zcv", parser);
 		assertEquals("|<|t:wer|w: |t:ry|w: |t:zcv|>", result);
 	}
 
 	@Test
-	public void oneExpr() throws Exception {
+	public void oneExpr() {
 		CharSource.pushString("(wer ry zcv)", parser);
 		assertEquals("|<|(|t:wer|w: |t:ry|w: |t:zcv|)|>", result);
 	}
 
 	@Test
-	public void nestedExpr() throws Exception {
+	public void nestedExpr() {
 		CharSource.pushString("(wer (ry zcv) (1 2) kkk)", parser);
 		assertEquals("|<|(|t:wer|w: |(|t:ry|w: |t:zcv|)|w: |(|t:1|w: |t:2|)|w: |t:kkk|)|>", result);
 	}
 
 	@Test
-	public void insignificantWhitespace() throws Exception {
+	public void insignificantWhitespace() {
 		CharSource.pushString("     (   wer           \n\t         kkk)   ", parser);
 		assertEquals("|<|w:     |(|w:   |t:wer|w:           |eol|w:\t         |t:kkk|)|w:   |>", result);
 	}
 
 	@Test
-	public void commentOutsideExpressionIsFine() throws Exception {
+	public void commentOutsideExpressionIsFine() {
 		CharSource.pushString(";wer ry zcv\n()", parser);
 		assertEquals("|<|c:wer ry zcv|eol|(|)|>", result);
 	}
 
 	@Test
-	public void commentCanHaveWhitespaceInFrontOfIt() throws Exception {
+	public void commentCanHaveWhitespaceInFrontOfIt() {
 		CharSource.pushString("                 \t\t;wer ry zcv\n()", parser);
 		assertEquals("|<|w:                 \t\t|c:wer ry zcv|eol|(|)|>", result);
 	}
 
 	@Test
-	public void commentInsideExpressionOnALineIsFine() throws Exception {
+	public void commentInsideExpressionOnALineIsFine() {
 		CharSource.pushString("(ab\n;wer ry zcv\nbc)", parser);
 		assertEquals("|<|(|t:ab|eol|c:wer ry zcv|eol|t:bc|)|>", result);
 	}
 
 	@Test
-	public void quoteSomeAtoms() throws Exception {
+	public void quoteSomeAtoms() {
 		CharSource.pushString("(ab     \"bc  rr)))\"    )", parser);
 		assertEquals("|<|(|t:ab|w:     |t:\"bc  rr)))\"|w:    |)|>", result);
 	}
 
 	@Test
-	public void quotedMultiline() throws Exception {
+	public void quotedMultiline() {
 		CharSource.pushString("(\"bc\n\nrr\")", parser);
 		assertEquals("|<|(|t:\"bc\n\nrr\"|)|>", result);
 	}
 
 
 	@Test
-	public void quotedComment() throws Exception {
+	public void quotedComment() {
 		CharSource.pushString("(\"bc\n;hello\nrr\")", parser);
 		assertEquals("|<|(|t:\"bc\n;hello\nrr\"|)|>", result);
 	}
 
 
 	@Test
-	public void commentedQuote() throws Exception {
+	public void commentedQuote() {
 		CharSource.pushString(";a \" quote", parser);
 		assertEquals("|<|c:a \" quote|>", result);
 	}
 
 
 	@Test
-	public void unclosedQuotes() throws Exception {
+	public void unclosedQuotes() {
 		CharSource.pushString("\"", parser);
 		assertEquals("|<|!:STREAM_ENDED_WHILE_IN_QUOTES|>", result);
 	}

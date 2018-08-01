@@ -3,12 +3,13 @@ package com.laamella.sexpression;
 import com.laamella.sexpression.model.Atom;
 import com.laamella.sexpression.model.AtomList;
 import com.laamella.sexpression.model.Document;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
 import static com.laamella.sexpression.CharSource.*;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SExpressionsParserTest {
 	private String stream = "";
@@ -46,19 +47,19 @@ public class SExpressionsParserTest {
 							})));
 
 	@Test
-	public void lostAtoms() throws IOException {
+	public void lostAtoms() {
 		pushString("wer ry zcv\n;lost comment\n()", parser);
 		assertEquals("|<|e:()|d:wer ry zcv ()|>", stream);
 	}
 
 	@Test
-	public void oneExpr() throws IOException {
+	public void oneExpr() {
 		pushString("(wer ry zcv)", parser);
 		assertEquals("|<|e:(wer ry zcv)|d:(wer ry zcv)|>", stream);
 	}
 
 	@Test
-	public void atomWithWhitespaceGetsQuoted() throws IOException {
+	public void atomWithWhitespaceGetsQuoted() {
 		pushString("(\"wer ry zcv\")", parser);
 		Atom atom = document.asVector().get(0).asList().asVector().get(0).asAtom();
 		assertEquals("wer ry zcv", atom.value());
@@ -66,7 +67,7 @@ public class SExpressionsParserTest {
 	}
 
 	@Test
-	public void atomWithBinaryDataGetsBase64Encoded() throws IOException {
+	public void atomWithBinaryDataGetsBase64Encoded() {
 		pushString("(abc |AAECAwQFBg==| abc)", parser);
 		Atom atom = document.asVector().get(0).asList().asVector().get(2).asAtom();
 		assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.data);
@@ -75,19 +76,19 @@ public class SExpressionsParserTest {
 
 
 	@Test
-	public void nestedExpr() throws IOException {
+	public void nestedExpr() {
 		pushString("(wer (ry zcv) (1 2) kkk)", parser);
 		assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|d:(wer (ry zcv) (1 2) kkk)|>", stream);
 	}
 
 	@Test
-	public void tooManyClosingParentheses() throws IOException {
+	public void tooManyClosingParentheses() {
 		pushString("())", parser);
 		assertEquals("|<|e:()|!:TOO_MANY_CLOSING_PARENTHESES|d:()|>", stream);
 	}
 
 	@Test
-	public void unclosedParentheses() throws IOException {
+	public void unclosedParentheses() {
 		pushString("(", parser);
 		assertEquals("|<|!:UNCLOSED_PARENTHESES|d:|>", stream);
 	}

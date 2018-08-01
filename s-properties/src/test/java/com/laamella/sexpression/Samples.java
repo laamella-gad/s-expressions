@@ -1,13 +1,13 @@
 package com.laamella.sexpression;
 
 import com.laamella.sexpression.properties.SProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-public class Samples {
+class Samples {
     @Test
-    public void configurationFile() throws Exception {
+    void configurationFile() throws Exception {
         SProperties properties = new SProperties();
         properties.loadResource("/config.s");
 
