@@ -4,9 +4,6 @@ import java.io.Closeable;
 
 import static com.laamella.sexpression.SExpressionsStreamingLexer.LexState.*;
 
-/**
- * This lexer supports lots of different syntaxes and is used by more specific lexers.
- */
 public class SExpressionsStreamingLexer implements CharSink, Closeable {
     enum LexState {
         TEXT, WHITESPACE, OTHER, CLOSED
@@ -36,7 +33,7 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
         } else switch (c) {
             case ';':
                 inState(OTHER);
-                callback.onComment(c, pos);
+                callback.onComment(pos);
                 break;
             case '(':
                 inState(OTHER);
@@ -124,9 +121,9 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
         void onOpenStream();
 
         /**
-         * Called for potential comment characters: # ;
+         * Called for comment characters: ;
          */
-        void onComment(char c, long pos);
+        void onComment(long pos);
 
         /**
          * Called on end of line, specifically when encountering the \n character. \r is treated as normal whitespace.

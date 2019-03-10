@@ -44,8 +44,8 @@ class SExpressionsStreamingLexerTest {
         }
 
         @Override
-        public void onComment(char c, long pos) {
-            result += "|c:" + c + " " + pos;
+        public void onComment(long pos) {
+            result += "|c" + pos;
         }
 
         @Override
