@@ -11,7 +11,7 @@ import java.util.*;
 
 import static com.laamella.sexpression.model.Factory.atom;
 import static com.laamella.sexpression.model.Factory.list;
-
+import static java.util.stream.Collectors.toList;
 
 public class SProperties implements Iterable<Map.Entry<String, String>> {
     private Document document;
@@ -58,7 +58,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
             @Override
             public Optional<String> onProperty(String key, String value, AtomList list) {
                 if (key.equals(searchKey)) {
-                    list.setNodes(list.asVector().get(0), atom(newValue));
+                    list.setNodes(list.asList().get(0), atom(newValue));
                     return Optional.of(value);
                 }
                 return Optional.empty();
@@ -75,7 +75,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
             AtomList l = document;
             for (String p : path) {
                 AtomList newList = list(atom(p));
-                l.setNodes(l.asVector().append(newList));
+                l.add(newList);
                 l = newList;
             }
             l.add(atom(newValue));
@@ -124,7 +124,11 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
     }
 
     private Optional<String> eval(Callback callback) {
-        for (AtomList atomList : document.asVector().filter(SExpression::isList).map(SExpression::asList)) {
+        List<AtomList> subLists = document.asList().stream()
+                .filter(SExpression::isAtomList)
+                .map(SExpression::asAtomList)
+                .collect(toList());
+        for (AtomList atomList : subLists) {
             Optional<String> value = eval("", atomList, callback);
             if (value.isPresent()) {
                 return value;
@@ -134,7 +138,7 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
     }
 
     private Optional<String> eval(String nesting, AtomList list, Callback callback) {
-        SExpression[] values = list.asVector().toJavaArray(SExpression.class);
+        SExpression[] values = list.asList().toArray(new SExpression[]{});
         if (list.isEmpty()) {
             callback.onError(new IllegalStateException("Found an empty list. Don't know what to do."));
         } else if (list.isAllAtoms()) {
@@ -149,8 +153,8 @@ public class SProperties implements Iterable<Map.Entry<String, String>> {
         } else if (values[0].isAtom()) {
             String innerNesting = nesting + values[0].asAtom().value() + ".";
             for (int i = 1; i < values.length; i++) {
-                if (values[i].isList()) {
-                    Optional<String> v = eval(innerNesting, values[i].asList(), callback);
+                if (values[i].isAtomList()) {
+                    Optional<String> v = eval(innerNesting, values[i].asAtomList(), callback);
                     if (v.isPresent()) {
                         return v;
                     }

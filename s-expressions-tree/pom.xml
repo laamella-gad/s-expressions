@@ -7,13 +7,13 @@
         <version>0.3-SNAPSHOT</version>
     </parent>
 
+    <artifactId>s-expressions-tree</artifactId>
     <name>${project.groupId}:${project.artifactId}</name>
-    <artifactId>s-properties</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>com.laamella</groupId>
-            <artifactId>s-expressions-tree</artifactId>
+            <artifactId>s-expressions-core</artifactId>
             <version>0.3-SNAPSHOT</version>
         </dependency>
         <dependency>
