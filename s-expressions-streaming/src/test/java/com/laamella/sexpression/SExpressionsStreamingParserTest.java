@@ -59,76 +59,76 @@ class SExpressionsStreamingParserTest {
 
     @Test
     void lostAtoms() {
-        CharSource.pushString("wer ry zcv", parser);
+        parser.pushString("wer ry zcv");
         assertEquals("|<|t:wer|w: |t:ry|w: |t:zcv|>", result);
     }
 
     @Test
     void oneExpr() {
-        CharSource.pushString("(wer ry zcv)", parser);
+        parser.pushString("(wer ry zcv)");
         assertEquals("|<|(|t:wer|w: |t:ry|w: |t:zcv|)|>", result);
     }
 
     @Test
     void nestedExpr() {
-        CharSource.pushString("(wer (ry zcv) (1 2) kkk)", parser);
+        parser.pushString("(wer (ry zcv) (1 2) kkk)");
         assertEquals("|<|(|t:wer|w: |(|t:ry|w: |t:zcv|)|w: |(|t:1|w: |t:2|)|w: |t:kkk|)|>", result);
     }
 
     @Test
     void insignificantWhitespace() {
-        CharSource.pushString("     (   wer           \n\t         kkk)   ", parser);
+        parser.pushString("     (   wer           \n\t         kkk)   ");
         assertEquals("|<|w:     |(|w:   |t:wer|w:           |eol|w:\t         |t:kkk|)|w:   |>", result);
     }
 
     @Test
     void commentOutsideExpressionIsFine() {
-        CharSource.pushString(";wer ry zcv\n()", parser);
+        parser.pushString(";wer ry zcv\n()");
         assertEquals("|<|c:wer ry zcv|eol|(|)|>", result);
     }
 
     @Test
     void commentCanHaveWhitespaceInFrontOfIt() {
-        CharSource.pushString("                 \t\t;wer ry zcv\n()", parser);
+        parser.pushString("                 \t\t;wer ry zcv\n()");
         assertEquals("|<|w:                 \t\t|c:wer ry zcv|eol|(|)|>", result);
     }
 
     @Test
     void commentInsideExpressionOnALineIsFine() {
-        CharSource.pushString("(ab\n;wer ry zcv\nbc)", parser);
+        parser.pushString("(ab\n;wer ry zcv\nbc)");
         assertEquals("|<|(|t:ab|eol|c:wer ry zcv|eol|t:bc|)|>", result);
     }
 
     @Test
     void quoteSomeAtoms() {
-        CharSource.pushString("(ab     \"bc  rr)))\"    )", parser);
+        parser.pushString("(ab     \"bc  rr)))\"    )");
         assertEquals("|<|(|t:ab|w:     |t:\"bc  rr)))\"|w:    |)|>", result);
     }
 
     @Test
     void quotedMultiline() {
-        CharSource.pushString("(\"bc\n\nrr\")", parser);
+        parser.pushString("(\"bc\n\nrr\")");
         assertEquals("|<|(|t:\"bc\n\nrr\"|)|>", result);
     }
 
 
     @Test
     void quotedComment() {
-        CharSource.pushString("(\"bc\n;hello\nrr\")", parser);
+        parser.pushString("(\"bc\n;hello\nrr\")");
         assertEquals("|<|(|t:\"bc\n;hello\nrr\"|)|>", result);
     }
 
 
     @Test
     void commentedQuote() {
-        CharSource.pushString(";a \" quote", parser);
+        parser.pushString(";a \" quote");
         assertEquals("|<|c:a \" quote|>", result);
     }
 
 
     @Test
     void unclosedQuotes() {
-        CharSource.pushString("\"", parser);
+        parser.pushString("\"");
         assertEquals("|<|!:STREAM_ENDED_WHILE_IN_QUOTES|>", result);
     }
 

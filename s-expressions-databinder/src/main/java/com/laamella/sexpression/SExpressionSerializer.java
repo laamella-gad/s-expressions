@@ -1,30 +1,31 @@
 package com.laamella.sexpression;
 
 import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-interface CustomSerializer {
-    void serialize(Object value, SExpressionsStreamingGenerator generator);
-}
-
 public final class SExpressionSerializer {
     private final Stack<ObjectToGenerate> objectsToGenerate = new Stack<>();
-    private final Map<Class<?>, CustomSerializer> serializers = new HashMap<>();
+    private final Map<Class<?>, FromTypeAdapter> fromTypeAdapters;
 
-    public SExpressionSerializer() {
-        serializers.put(Integer.class, (value, generator) -> generator.onText(value.toString(), false));
-        serializers.put(String.class, (value, generator) -> generator.onText(value.toString(), false));
+    SExpressionSerializer(Map<Class<?>, FromTypeAdapter> fromTypeAdapters) {
+        this.fromTypeAdapters = fromTypeAdapters;
     }
 
     public String serialize(Object o) {
         StringWriter stringWriter = new StringWriter();
         SExpressionsStreamingGenerator generator = new SExpressionsStreamingGenerator(stringWriter);
-        analyzeValue(o, generator);
+        serializeValue(o, generator);
         generate(generator);
         return stringWriter.toString();
+    }
+
+    private java.lang.reflect.Field[] reflect(Object o) {
+        java.lang.reflect.Field[] fields = o.getClass().getDeclaredFields();
+        for (java.lang.reflect.Field field : fields) {
+            field.setAccessible(true);
+        }
+        return fields;
     }
 
     private void pushObject(Object o, SExpressionsStreamingGenerator generator) {
@@ -32,12 +33,14 @@ public final class SExpressionSerializer {
             throw new IllegalStateException("Don't want nulls here.");
         }
         ObjectToGenerate objectToGenerate = new ObjectToGenerate(o);
-        java.lang.reflect.Field[] declaredFields = o.getClass().getDeclaredFields();
+        java.lang.reflect.Field[] declaredFields = reflect(o);
         for (int i = declaredFields.length; i > 0; i--) {
-            java.lang.reflect.Field field = declaredFields[i-1];
+            java.lang.reflect.Field field = declaredFields[i - 1];
             try {
-                field.setAccessible(true);
-                objectToGenerate.fieldsToGenerate.push(new Field(field.getName(), field.get(o)));
+                Object value = field.get(o);
+                if (shouldBeSerialized(value)) {
+                    objectToGenerate.fieldsToGenerate.push(new Field(field.getName(), value));
+                }
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -46,16 +49,22 @@ public final class SExpressionSerializer {
         generator.onOpeningBrace();
     }
 
-    private void analyzeValue(Object object, SExpressionsStreamingGenerator generator) {
+    private boolean shouldBeSerialized(Object value) {
+        if (value == null) {
+            return false;
+        }
+        return true;
+    }
+
+    private void serializeValue(Object object, SExpressionsStreamingGenerator generator) {
         if (object == null) {
-            generator.onText("#null", false);
+            return;
+        }
+        FromTypeAdapter fromTypeAdapter = fromTypeAdapters.get(object.getClass());
+        if (fromTypeAdapter == null) {
+            pushObject(object, generator);
         } else {
-            CustomSerializer serializer = serializers.get(object.getClass());
-            if (serializer == null) {
-                pushObject(object, generator);
-            } else {
-                serializer.serialize(object, generator);
-            }
+            fromTypeAdapter.serialize(object, generator);
         }
     }
 
@@ -67,10 +76,12 @@ public final class SExpressionSerializer {
                 generator.onClosingBrace();
             } else {
                 Field field = objectToGenerate.fieldsToGenerate.pop();
-                generator.onOpeningBrace();
-                generator.onText(field.name, false);
-                analyzeValue(field.value, generator);
-                generator.onClosingBrace();
+                if (shouldBeSerialized(field.value)) {
+                    generator.onOpeningBrace();
+                    generator.onText(field.name, false);
+                    serializeValue(field.value, generator);
+                    generator.onClosingBrace();
+                }
             }
         }
     }

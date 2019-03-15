@@ -2,7 +2,7 @@ package com.laamella.sexpression.codec;
 
 import java.util.Optional;
 
-import static com.laamella.sexpression.CharSource.UTF8;
+import static com.laamella.sexpression.CharSink.UTF8;
 import static com.laamella.sexpression.utils.Utils.hasSpecialCharacters;
 
 /**
