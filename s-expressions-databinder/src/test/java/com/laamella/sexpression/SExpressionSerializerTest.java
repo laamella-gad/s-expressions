@@ -1,6 +1,8 @@
 package com.laamella.sexpression;
 
 import com.laamella.sexpression.testobjects.Address;
+import com.laamella.sexpression.testobjects.AddressBook;
+import com.laamella.sexpression.testobjects.Index;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
@@ -85,18 +87,15 @@ class SExpressionSerializerTest {
 
     @Test
     void testSerializeList() {
-        List<String> list = Arrays.asList("a", "b", "c");
-        String serialized = binder.createSerializer().serialize(list);
-        assertEquals("(a b c)", serialized);
+        AddressBook addressBook = new AddressBook(new Address("Nieuweweg", 10), new Address("Kade", 99));
+        String serialized = binder.createSerializer().serialize(addressBook);
+        assertEquals("((addresses (#com.laamella.sexpression.testobjects.Address ((street Nieuweweg) (number 10)) #com.laamella.sexpression.testobjects.Address ((street Kade) (number 99)))))", serialized);
     }
 
     @Test
     void testSerializeMap() {
-        Map<String, String> map = new HashMap<>();
-        map.put("a", "A");
-        map.put("b", "B");
-        map.put("c", "C");
-        String serialized = binder.createSerializer().serialize(map);
-        assertEquals("((a A) (b B) (c C))", serialized);
+        Index index = new Index(new Address("Nieuweweg", 10), new Address("Kade", 99));
+        String serialized = binder.createSerializer().serialize(index);
+        assertEquals("((addressByStreet ((Kade #com.laamella.sexpression.testobjects.Address ((street Kade) (number 99))) (Nieuweweg #com.laamella.sexpression.testobjects.Address ((street Nieuweweg) (number 10))))))", serialized);
     }
 }

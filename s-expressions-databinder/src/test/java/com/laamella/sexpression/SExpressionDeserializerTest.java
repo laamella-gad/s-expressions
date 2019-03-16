@@ -1,10 +1,13 @@
 package com.laamella.sexpression;
 
 import com.laamella.sexpression.testobjects.Address;
+import com.laamella.sexpression.testobjects.AddressBook;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.*;
 
+import static java.lang.Math.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SExpressionDeserializerTest {
@@ -65,7 +68,7 @@ class SExpressionDeserializerTest {
     void testDeserializeFloat() throws IOException {
         SExpressionDeserializer deserializer = binder.createDeserializer();
         float nr = deserializer.deserialize("15.15", float.class);
-        assertEquals(15.15, nr);
+        assertTrue(abs(15.15 - nr) < 0.1);
     }
 
     @Test
@@ -98,6 +101,26 @@ class SExpressionDeserializerTest {
         Address address = binder.createDeserializer().deserialize("Nieuweweg:10", Address.class);
         assertEquals("Nieuweweg", address.street);
         assertEquals(10, address.number);
+    }
+
+    @Test
+    void testDeserializeList() throws IOException {
+//        AddressBook addressBook = binder.createDeserializer().deserialize("(a b c)", AddressBook.class);
+//        String serialized = binder.createSerializer().serialize(list);
+//        assertEquals("[\"a\", \"b\", \"c\"]", serialized);
+    }
+
+    @Test
+    void testDeserializeMap() throws IOException {
+//        HashMap map = binder.createDeserializer().deserialize("((a A) (b B) (c C))", HashMap.class);
+//        
+//
+//        Map<String, String> map = new HashMap<>();
+//        map.put("a", "A");
+//        map.put("b", "B");
+//        map.put("c", "C");
+//        String serialized = binder.createSerializer().serialize(map);
+//        assertEquals(, serialized);
     }
 
 }

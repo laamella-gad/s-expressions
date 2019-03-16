@@ -53,6 +53,9 @@ public class SExpressionDatabinder {
         addTypeAdapter(Short.class,
                 (value, generator) -> generator.onText(value.toString(), false),
                 Short::parseShort);
+        addTypeAdapter(short.class,
+                (value, generator) -> generator.onText(value.toString(), false),
+                Short::parseShort);
         addTypeAdapter(String.class,
                 (value, generator) -> generator.onText(value, false),
                 value -> value);

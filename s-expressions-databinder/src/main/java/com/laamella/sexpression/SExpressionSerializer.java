@@ -1,13 +1,10 @@
 package com.laamella.sexpression;
 
 import java.io.StringWriter;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Stack;
+import java.util.*;
 
 public final class SExpressionSerializer {
-    private final Stack<ObjectToGenerate> objectsToGenerate = new Stack<>();
+    private final Stack<ThingToGenerate> thingsToGenerate = new Stack<>();
     private final Map<Class<?>, FromTypeAdapter> fromTypeAdapters;
     private final Set<Object> seen = new HashSet<>();
 
@@ -31,32 +28,6 @@ public final class SExpressionSerializer {
         return fields;
     }
 
-    private void pushObject(Object o, SExpressionsStreamingGenerator generator) {
-        if (o == null) {
-            throw new IllegalStateException("Don't want nulls here.");
-        }
-        if (seen.contains(o)) {
-            throw new IllegalStateException("Circular reference to " + o.toString());
-        }
-        seen.add(o);
-        
-        ObjectToGenerate objectToGenerate = new ObjectToGenerate(o);
-        java.lang.reflect.Field[] declaredFields = reflect(o);
-        for (int i = declaredFields.length; i > 0; i--) {
-            java.lang.reflect.Field field = declaredFields[i - 1];
-            try {
-                Object value = field.get(o);
-                if (shouldBeSerialized(value)) {
-                    objectToGenerate.fieldsToGenerate.push(new Field(field.getName(), value));
-                }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-        objectsToGenerate.push(objectToGenerate);
-        generator.onOpeningBrace();
-    }
-
     private boolean shouldBeSerialized(Object value) {
         if (value == null) {
             return false;
@@ -69,47 +40,185 @@ public final class SExpressionSerializer {
             return;
         }
         FromTypeAdapter fromTypeAdapter = fromTypeAdapters.get(object.getClass());
-        if (fromTypeAdapter == null) {
-            pushObject(object, generator);
-        } else {
+        if (fromTypeAdapter != null) {
             fromTypeAdapter.serialize(object, generator);
+        } else {
+            if (seen.contains(object)) {
+                throw new IllegalStateException("Circular reference to " + object.toString());
+            }
+            seen.add(object);
+
+            final ThingToGenerate thingToGenerate;
+            if (object instanceof Iterable) {
+                thingToGenerate = new IterableToGenerate(object);
+            } else if (object instanceof Map) {
+                thingToGenerate = new MapToGenerate(object);
+            } else {
+                thingToGenerate = new ObjectToGenerate(object);
+            }
+            thingToGenerate.begin(generator);
+            thingsToGenerate.push(thingToGenerate);
         }
     }
 
     private void generate(SExpressionsStreamingGenerator generator) {
-        while (!objectsToGenerate.empty()) {
-            ObjectToGenerate objectToGenerate = objectsToGenerate.peek();
-            if (objectToGenerate.fieldsToGenerate.empty()) {
-                objectsToGenerate.pop();
-                generator.onClosingBrace();
+        while (!thingsToGenerate.empty()) {
+            ThingToGenerate thingToGenerate = thingsToGenerate.peek();
+            if (thingToGenerate.isDoneGenerating()) {
+                ThingToGenerate thing = thingsToGenerate.pop();
+                thing.end(generator);
             } else {
-                Field field = objectToGenerate.fieldsToGenerate.pop();
-                if (shouldBeSerialized(field.value)) {
-                    generator.onOpeningBrace();
-                    generator.onText(field.name, false);
-                    serializeValue(field.value, generator);
-                    generator.onClosingBrace();
-                }
+                thingToGenerate.step(generator);
             }
         }
     }
 
-    private final static class ObjectToGenerate {
+    private interface ThingToGenerate {
+        boolean isDoneGenerating();
+
+        void step(SExpressionsStreamingGenerator generator);
+
+        void end(SExpressionsStreamingGenerator generator);
+
+        void begin(SExpressionsStreamingGenerator generator);
+    }
+
+    private final class ObjectToGenerate implements ThingToGenerate {
+
+        private final class Field {
+            final String name;
+            final Object value;
+
+            Field(String name, Object value) {
+                this.name = name;
+                this.value = value;
+            }
+        }
+
         final Object object;
         final Stack<Field> fieldsToGenerate = new Stack<>();
+        boolean fieldNeedsClosing = false;
 
         ObjectToGenerate(Object object) {
             this.object = object;
+            java.lang.reflect.Field[] declaredFields = reflect(object);
+            for (int i = declaredFields.length; i > 0; i--) {
+                java.lang.reflect.Field field = declaredFields[i - 1];
+                try {
+                    Object value = field.get(object);
+                    if (shouldBeSerialized(value)) {
+                        fieldsToGenerate.push(new Field(field.getName(), value));
+                    }
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+
+        @Override
+        public boolean isDoneGenerating() {
+            return fieldsToGenerate.empty();
+        }
+
+        @Override
+        public void step(SExpressionsStreamingGenerator generator) {
+            Field field = fieldsToGenerate.pop();
+            if (shouldBeSerialized(field.value)) {
+                if (fieldNeedsClosing) {
+                    generator.onClosingBrace();
+                }
+                fieldNeedsClosing = true;
+                generator.onOpeningBrace();
+                generator.onText(field.name, false);
+                serializeValue(field.value, generator);
+            }
+        }
+
+        @Override
+        public void end(SExpressionsStreamingGenerator generator) {
+            if (fieldNeedsClosing) {
+                generator.onClosingBrace();
+            }
+            generator.onClosingBrace();
+        }
+
+        @Override
+        public void begin(SExpressionsStreamingGenerator generator) {
+            generator.onOpeningBrace();
         }
     }
 
-    private final static class Field {
-        final String name;
-        final Object value;
+    private final class MapToGenerate implements ThingToGenerate {
+        private final Iterator iterator;
+        private boolean entryNeedsClosing = false;
 
-        Field(String name, Object value) {
-            this.name = name;
-            this.value = value;
+        public MapToGenerate(Object map) {
+            iterator = ((Map) map).entrySet().iterator();
+        }
+
+        @Override
+        public boolean isDoneGenerating() {
+            return !iterator.hasNext();
+        }
+
+        @Override
+        public void step(SExpressionsStreamingGenerator generator) {
+            if (entryNeedsClosing) {
+                generator.onClosingBrace();
+            }
+            entryNeedsClosing = true;
+
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) iterator.next();
+            Object key = entry.getKey();
+            generator.onOpeningBrace();
+            generator.onText(key.toString(), false);
+            Object value = entry.getValue();
+            generator.onText("#" + value.getClass().getName(), false);
+            serializeValue(value, generator);
+        }
+
+        @Override
+        public void end(SExpressionsStreamingGenerator generator) {
+            if (entryNeedsClosing) {
+                generator.onClosingBrace();
+            }
+            generator.onClosingBrace();
+        }
+
+        @Override
+        public void begin(SExpressionsStreamingGenerator generator) {
+            generator.onOpeningBrace();
         }
     }
+
+    private final class IterableToGenerate implements ThingToGenerate {
+        private final Iterator iterator;
+
+        public IterableToGenerate(Object iterable) {
+            iterator = ((Iterable) iterable).iterator();
+        }
+
+        @Override
+        public boolean isDoneGenerating() {
+            return !iterator.hasNext();
+        }
+
+        @Override
+        public void step(SExpressionsStreamingGenerator generator) {
+            Object value = iterator.next();
+            generator.onText("#" + value.getClass().getName(), false);
+            serializeValue(value, generator);
+        }
+
+        @Override
+        public void end(SExpressionsStreamingGenerator generator) {
+            generator.onClosingBrace();
+        }
+
+        @Override
+        public void begin(SExpressionsStreamingGenerator generator) {
+            generator.onOpeningBrace();
+        }
+    }
+
 }
