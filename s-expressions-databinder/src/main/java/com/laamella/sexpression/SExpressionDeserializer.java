@@ -13,7 +13,7 @@ import java.util.Stack;
 
 import static com.laamella.sexpression.SExpressionDeserializer.StreamState.*;
 
-public class SExpressionDeserializer {
+public final class SExpressionDeserializer {
     private final Map<Class<?>, ToTypeAdapter> toTypeAdapters;
 
     SExpressionDeserializer(Map<Class<?>, ToTypeAdapter> toTypeAdapters) {
@@ -65,16 +65,16 @@ public class SExpressionDeserializer {
         EXPECT_VALUE_OR_OBJECT,
         EXPECT_FIELD_NAME,
         EXPECT_VALUE_END,
-        EXPECT_FIELD_OR_OBJECT_END
+        EXPECT_FIELD_START_OR_OBJECT_END
     }
 
-    private class SExpressionStreamingDeserializer<T> implements SExpressionsStreamingParser.Callback {
+    private final class SExpressionStreamingDeserializer<T> implements SExpressionsStreamingParser.Callback {
 
         private final Objenesis objenesis = new ObjenesisStd();
 
         private final Stack<Object> stack = new Stack<>();
         private Stack<ValueLocator> valueLocators = new Stack<>();
-        T root;
+        T root = null;
 
         private StreamState streamState = EXPECT_VALUE_OR_OBJECT;
 
@@ -82,7 +82,7 @@ public class SExpressionDeserializer {
             valueLocators.push(new ValueLocator() {
                 @Override
                 public void setValue(Object value) {
-                    root = rootClass.cast(value);
+                    root = (T) value;
                 }
 
                 @Override
@@ -96,7 +96,6 @@ public class SExpressionDeserializer {
         public void onText(String text) {
             switch (streamState) {
                 case EXPECT_VALUE_OR_OBJECT:
-                    System.out.println("Found value " + text);
                     ValueLocator valueLocator = valueLocators.pop();
                     ToTypeAdapter toTypeAdapter = toTypeAdapters.get(valueLocator.getValueType());
                     if (toTypeAdapter == null) {
@@ -107,7 +106,6 @@ public class SExpressionDeserializer {
                     streamState = EXPECT_VALUE_END;
                     break;
                 case EXPECT_FIELD_NAME:
-                    System.out.println("Found field " + text);
                     Object o = stack.peek();
                     try {
                         Field field = o.getClass().getField(text);
@@ -118,6 +116,10 @@ public class SExpressionDeserializer {
                     }
                     streamState = EXPECT_VALUE_OR_OBJECT;
                     break;
+                case EXPECT_VALUE_END:
+                    throw new IllegalStateException("Expected ), got " + text);
+                case EXPECT_FIELD_START_OR_OBJECT_END:
+                    throw new IllegalStateException("Expected ( or ), got " + text);
                 default:
                     throw new IllegalStateException();
             }
@@ -129,17 +131,17 @@ public class SExpressionDeserializer {
                 case EXPECT_VALUE_OR_OBJECT:
                     ValueLocator valueLocator = valueLocators.peek();
                     ObjectInstantiator<?> instantiator = objenesis.getInstantiatorOf(valueLocator.getValueType());
-                    System.out.println("( object " + valueLocator.getValueType().getName());
                     Object o = instantiator.newInstance();
                     stack.push(o);
-                    streamState = EXPECT_FIELD_OR_OBJECT_END;
+                    streamState = EXPECT_FIELD_START_OR_OBJECT_END;
                     break;
-                case EXPECT_FIELD_OR_OBJECT_END:
-                    System.out.println("( field");
+                case EXPECT_FIELD_START_OR_OBJECT_END:
                     streamState = EXPECT_FIELD_NAME;
                     break;
-                default:
-                    throw new IllegalStateException();
+                case EXPECT_VALUE_END:
+                    throw new IllegalStateException("Expected ), got (");
+                case EXPECT_FIELD_NAME:
+                    throw new IllegalStateException("Expected field name, got (");
             }
         }
 
@@ -147,14 +149,16 @@ public class SExpressionDeserializer {
         public void onListEnd() {
             switch (streamState) {
                 case EXPECT_VALUE_END:
-                    System.out.println("value )");
-                    streamState = EXPECT_FIELD_OR_OBJECT_END;
+                    streamState = EXPECT_FIELD_START_OR_OBJECT_END;
                     break;
-                case EXPECT_FIELD_OR_OBJECT_END:
-                    System.out.println("object )");
+                case EXPECT_FIELD_START_OR_OBJECT_END:
                     Object value = stack.pop();
                     valueLocators.pop().setValue(value);
                     break;
+                case EXPECT_VALUE_OR_OBJECT:
+                    throw new IllegalStateException("Expected value or object start, got )");
+                case EXPECT_FIELD_NAME:
+                    throw new IllegalStateException("Expected field name, got )");
                 default:
                     throw new IllegalStateException();
             }
@@ -165,34 +169,26 @@ public class SExpressionDeserializer {
             if (!stack.isEmpty()) {
                 throw new IllegalStateException();
             }
-            if (!valueLocators.isEmpty()) {
-                throw new IllegalStateException();
-            }
         }
 
         @Override
         public void onComment(String comment) {
-
         }
 
         @Override
         public void onError(SExpressionsStreamingParser.Error error) {
-
         }
 
         @Override
         public void onOpenStream() {
-
         }
 
         @Override
         public void onWhitespace(String whitespace) {
-
         }
 
         @Override
         public void onEndOfLine() {
-
         }
     }
 }

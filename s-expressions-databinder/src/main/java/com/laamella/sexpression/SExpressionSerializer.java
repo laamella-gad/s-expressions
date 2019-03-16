@@ -1,12 +1,15 @@
 package com.laamella.sexpression;
 
 import java.io.StringWriter;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 public final class SExpressionSerializer {
     private final Stack<ObjectToGenerate> objectsToGenerate = new Stack<>();
     private final Map<Class<?>, FromTypeAdapter> fromTypeAdapters;
+    private final Set<Object> seen = new HashSet<>();
 
     SExpressionSerializer(Map<Class<?>, FromTypeAdapter> fromTypeAdapters) {
         this.fromTypeAdapters = fromTypeAdapters;
@@ -32,6 +35,11 @@ public final class SExpressionSerializer {
         if (o == null) {
             throw new IllegalStateException("Don't want nulls here.");
         }
+        if (seen.contains(o)) {
+            throw new IllegalStateException("Circular reference to " + o.toString());
+        }
+        seen.add(o);
+        
         ObjectToGenerate objectToGenerate = new ObjectToGenerate(o);
         java.lang.reflect.Field[] declaredFields = reflect(o);
         for (int i = declaredFields.length; i > 0; i--) {
@@ -86,7 +94,7 @@ public final class SExpressionSerializer {
         }
     }
 
-    static class ObjectToGenerate {
+    private final static class ObjectToGenerate {
         final Object object;
         final Stack<Field> fieldsToGenerate = new Stack<>();
 
@@ -95,7 +103,7 @@ public final class SExpressionSerializer {
         }
     }
 
-    static class Field {
+    private final static class Field {
         final String name;
         final Object value;
 

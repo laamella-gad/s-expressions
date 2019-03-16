@@ -20,7 +20,7 @@
 
     <modules>
         <module>s-expressions-streaming</module>
-        <module>s-expressions-databinding</module>
+        <module>s-expressions-databinder</module>
         <module>s-expressions-tree</module>
         <module>s-expressions-list</module>
         <module>s-properties</module>
