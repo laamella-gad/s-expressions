@@ -3,6 +3,9 @@ package com.laamella.sexpression;
 import java.io.IOException;
 import java.io.Writer;
 
+/**
+ * A low-level class for generating s-expression files.
+ */
 public class SExpressionsStreamingGenerator {
 
     private final Writer writer;
@@ -21,7 +24,7 @@ public class SExpressionsStreamingGenerator {
             writer.write(text);
             needSpace = true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
         if (quoted) {
             onQuote();
@@ -33,7 +36,7 @@ public class SExpressionsStreamingGenerator {
             try {
                 writer.write(" ");
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                onIOException(e);
             }
 
             needSpace = false;
@@ -45,7 +48,7 @@ public class SExpressionsStreamingGenerator {
         try {
             writer.write(whitespace);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
 
     }
@@ -55,7 +58,7 @@ public class SExpressionsStreamingGenerator {
         try {
             writer.write('(');
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
 
     }
@@ -66,7 +69,7 @@ public class SExpressionsStreamingGenerator {
             writer.write(')');
             needSpace = true;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
     }
 
@@ -75,7 +78,7 @@ public class SExpressionsStreamingGenerator {
         try {
             writer.write('\'');
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
     }
 
@@ -92,7 +95,7 @@ public class SExpressionsStreamingGenerator {
         try {
             writer.write(';');
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
     }
 
@@ -100,8 +103,11 @@ public class SExpressionsStreamingGenerator {
         try {
             writer.write('\n');
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            onIOException(e);
         }
     }
 
+    private void onIOException(IOException e) {
+        throw new RuntimeException(e);
+    }
 }
