@@ -2,6 +2,7 @@ package com.laamella.sexpression;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Something that wants char-by-char input pushed into it.
@@ -9,7 +10,7 @@ import java.nio.charset.Charset;
 public interface CharSink extends Closeable {
     void accept(char c);
 
-    Charset UTF8 = Charset.forName("utf-8");
+    Charset UTF8 = StandardCharsets.UTF_8;
 
     default void push(Reader reader) throws IOException {
         try {

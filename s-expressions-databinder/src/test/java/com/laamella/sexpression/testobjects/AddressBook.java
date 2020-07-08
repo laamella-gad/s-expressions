@@ -1,13 +1,11 @@
 package com.laamella.sexpression.testobjects;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AddressBook {
-    public List<Address> addresses = new ArrayList<>();
+    public List<Address> addresses;
 
-    public AddressBook(Address... addresses) {
-        this.addresses.addAll(Arrays.asList(addresses));
+    public AddressBook(List<Address> addresses) {
+        this.addresses = addresses;
     }
 }
