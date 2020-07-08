@@ -23,7 +23,7 @@ public class SExpressionsStreamingLexer implements CharSink, Closeable {
         this.callback = callback;
     }
 
-    public void accept(char c) {
+    public void push(char c) {
         if (c == '\n') {
             inState(OTHER);
             callback.onEndOfLine(pos);

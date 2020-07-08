@@ -45,19 +45,19 @@ public class SExpressionsToTreeParserTest {
 
 	@Test
 	public void lostAtoms() {
-		CharSource.pushString("wer ry zcv\n;lost comment\n()", parser);
+		parser.pushString("wer ry zcv\n;lost comment\n()");
 		assertEquals("|<|e:()|d:wer ry zcv ()|>", stream);
 	}
 
 	@Test
 	public void oneExpr() {
-		CharSource.pushString("(wer ry zcv)", parser);
+		parser.pushString("(wer ry zcv)");
 		assertEquals("|<|e:(wer ry zcv)|d:(wer ry zcv)|>", stream);
 	}
 
 	@Test
 	public void atomWithWhitespaceGetsQuoted() {
-		CharSource.pushString("(\"wer ry zcv\")", parser);
+		parser.pushString("(\"wer ry zcv\")");
 		Atom atom = document.asList().get(0).asList().get(0).asAtom();
 		assertEquals("wer ry zcv", atom.value());
 		assertEquals("|<|e:(\"wer ry zcv\")|d:(\"wer ry zcv\")|>", stream);
@@ -65,7 +65,7 @@ public class SExpressionsToTreeParserTest {
 
 	@Test
 	public void atomWithBinaryDataGetsBase64Encoded() {
-		CharSource.pushString("(abc |AAECAwQFBg==| abc)", parser);
+		parser.pushString("(abc |AAECAwQFBg==| abc)");
 		Atom atom = document.asList().get(0).asList().get(1).asAtom();
 		assertArrayEquals(new byte[]{0, 1, 2, 3, 4, 5, 6}, atom.data);
 		assertEquals("|<|e:(abc |AAECAwQFBg==| abc)|d:(abc |AAECAwQFBg==| abc)|>", stream);
@@ -74,19 +74,19 @@ public class SExpressionsToTreeParserTest {
 
 	@Test
 	public void nestedExpr() {
-		CharSource.pushString("(wer (ry zcv) (1 2) kkk)", parser);
+		parser.pushString("(wer (ry zcv) (1 2) kkk)");
 		assertEquals("|<|e:(wer (ry zcv) (1 2) kkk)|d:(wer (ry zcv) (1 2) kkk)|>", stream);
 	}
 
 	@Test
 	public void tooManyClosingParentheses() {
-		CharSource.pushString("())", parser);
+		parser.pushString("())");
 		assertEquals("|<|e:()|!:TOO_MANY_CLOSING_PARENTHESES|d:()|>", stream);
 	}
 
 	@Test
 	public void unclosedParentheses() {
-		CharSource.pushString("(", parser);
+		parser.pushString("(");
 		assertEquals("|<|!:UNCLOSED_PARENTHESES|d:|>", stream);
 	}
 

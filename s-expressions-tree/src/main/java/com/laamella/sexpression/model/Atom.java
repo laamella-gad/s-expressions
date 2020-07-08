@@ -1,10 +1,12 @@
 package com.laamella.sexpression.model;
 
-import com.laamella.sexpression.CharSource;
 import com.laamella.sexpression.codec.AtomCodec;
 import com.laamella.sexpression.visitor.Visitor;
 
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+
+import static java.nio.charset.StandardCharsets.*;
 
 public class Atom extends SExpression {
     public byte[] data;
@@ -28,7 +30,7 @@ public class Atom extends SExpression {
      * If the atom contains binary data this is undefined, use raw() instead.
      */
     public String value() {
-        return new String(data, CharSource.UTF8);
+        return new String(data, UTF_8);
     }
 
     @Override

@@ -2,9 +2,11 @@ package com.laamella.sexpression;
 
 import com.laamella.sexpression.codec.AtomCodec;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.laamella.sexpression.codec.AtomCodec.*;
+import static java.nio.charset.StandardCharsets.*;
 
 public class SExpressionsToListsParser implements SExpressionsStreamingParser.Callback {
     private final Deque<List<Object>> stack = new ArrayDeque<>();
@@ -19,7 +21,7 @@ public class SExpressionsToListsParser implements SExpressionsStreamingParser.Ca
             for (AtomCodec codec : decodeList) {
                 Optional<byte[]> raw = codec.decode(text);
                 if (raw.isPresent()) {
-                    top.add(new String(raw.get(), CharSource.UTF8));
+                    top.add(new String(raw.get(), UTF_8));
                     return;
                 }
             }

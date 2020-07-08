@@ -1,5 +1,6 @@
 package com.laamella.sexpression.model;
 
+import com.laamella.sexpression.CharSink;
 import com.laamella.sexpression.SExpressionsToTreeParser;
 import com.laamella.sexpression.SExpressionsToTreeParser.Callback.DocumentGrabbingCallback;
 import com.laamella.sexpression.SExpressionsStreamingLexer;
@@ -8,9 +9,10 @@ import com.laamella.sexpression.visitor.Visitor;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static com.laamella.sexpression.CharSource.*;
+import static java.nio.charset.StandardCharsets.*;
 
 public class Document extends AtomList {
     public Document(List<SExpression> nodes, List<String> comments) {
@@ -48,7 +50,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsToTreeParser(callback)));
-        push(reader, parser);
+        parser.push(reader);
         return callback.document;
     }
 
@@ -58,7 +60,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsToTreeParser(callback)));
-        pushResource(resourceName, UTF8, parser);
+        parser.pushResource(resourceName, UTF_8);
         return callback.document;
     }
 
@@ -68,7 +70,7 @@ public class Document extends AtomList {
                 new SExpressionsStreamingLexer(
                         new SExpressionsStreamingParser(
                                 new SExpressionsToTreeParser(callback)));
-        pushString(string, parser);
+        parser.pushString(string);
         return callback.document;
     }
 }

@@ -7,9 +7,7 @@ import java.nio.charset.Charset;
  * Something that wants char-by-char input pushed into it.
  */
 public interface CharSink extends Closeable {
-    void accept(char c);
-
-    Charset UTF8 = Charset.forName("utf-8");
+    void push(char c);
 
     default void push(Reader reader) throws IOException {
         try {
@@ -19,7 +17,7 @@ public interface CharSink extends Closeable {
                     close();
                     return;
                 }
-                accept((char) c);
+                push((char) c);
             }
         } finally {
             reader.close();
@@ -35,7 +33,7 @@ public interface CharSink extends Closeable {
 
     default void pushString(String string) {
         for (char c : string.toCharArray()) {
-            accept(c);
+            push(c);
         }
         try {
             close();
@@ -44,5 +42,4 @@ public interface CharSink extends Closeable {
             throw new RuntimeException(e);
         }
     }
-
 }

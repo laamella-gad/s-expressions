@@ -43,19 +43,19 @@ class SExpressionsToListsParserTest {
 
     @Test
     void lostAtoms() {
-        CharSource.pushString("wer ry zcv\n;lost comment\n()", parser);
+        parser.pushString("wer ry zcv\n;lost comment\n()");
         assertEquals("|<|e:[]|r:[wer, ry, zcv, []]|>", stream);
     }
 
     @Test
     void oneExpr() {
-        CharSource.pushString("(wer ry zcv)", parser);
+        parser.pushString("(wer ry zcv)");
         assertEquals("|<|e:[wer, ry, zcv]|r:[[wer, ry, zcv]]|>", stream);
     }
 
     @Test
     void quotedAtomBecomesSingleString() {
-        CharSource.pushString("(\"wer ry zcv\")", parser);
+        parser.pushString("(\"wer ry zcv\")");
         String atom = ((List<Object>) result.get(0)).get(0).toString();
         assertEquals("wer ry zcv", atom);
         assertEquals("|<|e:[wer ry zcv]|r:[[wer ry zcv]]|>", stream);
@@ -64,19 +64,19 @@ class SExpressionsToListsParserTest {
 
     @Test
     void nestedExpr() {
-        CharSource.pushString("(wer (ry zcv) (1 2) kkk)", parser);
+        parser.pushString("(wer (ry zcv) (1 2) kkk)");
         assertEquals("|<|e:[wer, [ry, zcv], [1, 2], kkk]|r:[[wer, [ry, zcv], [1, 2], kkk]]|>", stream);
     }
 
     @Test
     void tooManyClosingParentheses() {
-        CharSource.pushString("())", parser);
+        parser.pushString("())");
         assertEquals("|<|e:[]|!:TOO_MANY_CLOSING_PARENTHESES|r:[[]]|>", stream);
     }
 
     @Test
     void unclosedParentheses() {
-        CharSource.pushString("(", parser);
+        parser.pushString("(");
         assertEquals("|<|!:UNCLOSED_PARENTHESES|r:[]|>", stream);
     }
 }
