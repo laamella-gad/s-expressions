@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static com.laamella.sexpression.codec.AtomCodec.*;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.charset.StandardCharsets.*;
 
 public class SExpressionsToListsParser implements SExpressionsStreamingParser.Callback {
