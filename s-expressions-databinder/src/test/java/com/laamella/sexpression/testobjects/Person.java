@@ -14,4 +14,14 @@ public class Person {
         this.favourite = favourite;
         this.address = address;
     }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", favourite=" + favourite +
+                ", address=" + address +
+                '}';
+    }
 }

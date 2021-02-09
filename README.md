@@ -58,3 +58,30 @@ for (Map.Entry<String, String> e : properties) {
 ### Sample for data storage
 
 TODO
+
+### Simple schema
+
+A simple schema definition defines a minimal contract,
+just enough to know the basic structure of a file. 
+
+It uses the following data types:
+
+- atoms `sample-atom` `125135` `15-5-2029`
+- lists `(1 2 3)` `(cheese onion)`
+- mappings `((name Piet) (age 15))`
+
+And the schema is defined as follows:
+
+- atoms are implicitly defined by lists and mappings
+- lists
+  - `(list Coordinate x y)` for a list called "Coordinate" of two atoms named "x" and "y" like `(15 99)`
+  - `(list Name 'name name)` for a list named "Name" of one constant atom, and one atom named "name" like `(name Pietje)`   
+  - `(list ages)` for a list of any amount of atoms named "ages" like `(46 32 11 19)`
+  - `(list order price tracking-info...)`  for a list with two atoms named "order" and "price" and any amount of atoms following it, named "tracking-info" like `("bag of peanuts" 15.99 "entered" "packed" "sent")`
+- mappings
+  - `(map (name) (age))` for a map with two (optional) keys with an atom value like `((name Piet) (age 15))`
+
+Combined, these become:
+
+- `(map person (name) (address (list street number)))` for a map named "person" with two (optional) keys, where name has an atom value and adress has a list value like `(person (name Piet) (address Hoofdstraat 15`))
+- `(list `

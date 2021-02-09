@@ -1,6 +1,6 @@
 ((person
     (name "Danny Bridges")
-    (birthday 5 July 1960)
+    (birthday  (5 July 1960))
     (address (Nieuweweg 10)))
  (person
     (name "Pietje Puk")

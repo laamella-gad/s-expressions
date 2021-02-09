@@ -8,4 +8,11 @@ public class AddressBook {
     public AddressBook(List<Address> addresses) {
         this.addresses = addresses;
     }
+
+    @Override
+    public String toString() {
+        return "AddressBook{" +
+                "addresses=" + addresses +
+                '}';
+    }
 }
