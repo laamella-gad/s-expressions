@@ -1,11 +1,12 @@
 package com.laamella.sexpression;
 
+import com.laamella.sexpression.SchemaParser.Callback.ResultGrabbingCallback;
 import org.junit.jupiter.api.Test;
 
 class SchemaParserTest {
     @Test
     void abc() {
-        SchemaCollector schemaCollector = new SchemaCollector();
+        ResultGrabbingCallback schemaCollector = new ResultGrabbingCallback();
         new SExpressionsStreamingLexer(
                 new SExpressionsStreamingParser(
                         new SExpressionsToListsParser(

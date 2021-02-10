@@ -1,11 +1,10 @@
 package com.laamella.sexpression;
 
-import java.util.HashMap;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class ComplexType extends SchemaType {
-    public final Map<String, SchemaType> subTypes = new HashMap<>();
+    public final Map<String, SchemaType> subTypes = new LinkedHashMap<>();
 
     public ComplexType(String name, boolean nameHidden, boolean required, boolean repeatable) {
         super(name, nameHidden, required, repeatable);

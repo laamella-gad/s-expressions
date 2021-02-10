@@ -12,7 +12,7 @@ public class SchemaParser implements SExpressionsToListsParser.Callback {
     @Override
     public void onResult(List<Object> document) {
         Schema schema = new Schema();
-        schema.typeContainer = new ComplexType("root", true, true, true);
+
         for (Object topLevelTypeDeclaration : document) {
             evaluate((List<Object>) topLevelTypeDeclaration, schema.typeContainer);
         }
@@ -80,5 +80,24 @@ public class SchemaParser implements SExpressionsToListsParser.Callback {
             public void onCloseStream() {
             }
         }
+
+        class ResultGrabbingCallback extends Adapter {
+            private Schema schema = null;
+
+            public Schema getSchema() {
+                return schema;
+            }
+
+            @Override
+            public void onResult(Schema schema) {
+                this.schema = schema;
+            }
+
+            @Override
+            public void onError(SExpressionsToListsParser.Error error) {
+                throw new RuntimeException(error.toString());
+            }
+        }
+
     }
 }

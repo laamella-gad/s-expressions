@@ -1,7 +1,7 @@
 package com.laamella.sexpression;
 
 public class Schema {
-    public ComplexType typeContainer;
+    public final ComplexType typeContainer = new ComplexType("root", true, true, true);
 
     @Override
     public String toString() {
