@@ -1,7 +1,5 @@
 package com.laamella.sexpression.codec;
 
-import org.omg.IOP.Codec;
-
 import java.util.Optional;
 
 /**
